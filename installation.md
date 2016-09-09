@@ -9,6 +9,27 @@ The installation procedure is managed by a set of bash scripts operating at diff
 
 Installation process may differ in case there exists a specific OS/Architecture hi-level isntallation script.
 
+## Using low level scripts
+Architectures not targeted by hi-level scripts maybe installed as well, directly using low level scripts. These installation files can be used on all those OS platforms using as package management tools: yum, apt and brew; thus: EL OSes (i.e RedHat, CentOS, Debian, MacOSX and potentially Windows under Cygwin environment).
+In order to use low level scritps, the user has to download from the git repository all files having the name 'setup\_\<component\>.sh'. Then the user can install the system just executing each script in the order:
+
+1) ./setup_FGPortal.sh - Install the core components of the system and preparing the necessary environment
+2) ./setup_JSAGA.sh - Provides a complete JSAGA installation with binaries and libraries
+3) ./setup_GridEngine.sh - Install the Grid&Cloud Engine (necessary to target SSH, EMI/gLite, rOCCI infrastructures) 
+4) ./setup_OCCI.sh - Install the OCCI CLI with GSI necessary packages
+5) ./setup_FGService.sh - Execute only in case you want to run FutureGateway as a service
+
+Before execute any 'setup\_\<component\>.sh' script; the user has to configure the file setup\_config.sh file to override default configuration settings written at the top of each setup file.
+Once installation files have been executed; it is necessary to log-out and login again; so that the new environment will be ready and the two APIServer components (fgAPIServer and APIServerDaemon) can be installed from sources with the following steps:
+
+1) Download fgAPIServer files from gitHub in the directory: $FGLOCATION/fgAPIServer
+2) Execute fgapiserver.py script inside a dedicated screen section or confiure wsgi to run it
+3) Download APIServerDaemon files from gitHub in the directory: $FGLOCATION/APIServerDaemon
+4) Go inside the APIServerDaemon directory and compile java code with: ant all
+5) Copy the generated war file into $CATALINA_HOME/webapps directory and check on $CATALINA_HOME/logs/catalina.out file that the installation is successful
+
+At this stage the user has a complete and operating FutureGateway environment
+
 ## Ubuntu LTS 14.04 Server 
 
 In order to install the FutureGateway, just execute as root user:
@@ -60,7 +81,7 @@ In order to test FutureGateway REST APIs, several services should be started bef
 1. The REST APIs [front-end][FGAPPDB]
 2. The API [ServerDaemon][FGASRVD]
 
-## REST APIs front-end
+## REST APIs front-end (fgAPIServer)
 In a production environment the API server front-end must be configured with a dedicated wsgi configuration inside the web server. However for testing purposes the front-end can be executed in stand-alone mode with the following set of commands:
 
 * Instantiate a screen section:
@@ -72,7 +93,7 @@ In a production environment the API server front-end must be configured with a d
 Detach with \<ctrl-a\>\<ctrl-d\>
 Reattach the front-end process anytime with `screen -r fgAPIServer`
 
-## APIServer Daemon
+## APIServer Daemon (APIServerDaemon)
 The API Server Daemon conists of a web application, so that it is necessary to startup the application server (Tomcat). The virtual appliance is already configured to install and execute the daemon during the application server startup.
 To startup the application server you may use the standard scripts provided with Tomcat or you may use the 'start\_tomcat' utility:
 
