@@ -14,7 +14,7 @@ Architectures not targeted by hi-level scripts maybe installed as well, directly
 In order to use low level scritps, the user has to download from the git repository all files having the name 'setup\_\<component\>.sh'. Then the user can install the system just executing each script in the order:
 
 1. ./setup_FGPortal.sh - Install the core components of the system and preparing the necessary environment
-2- ./setup_JSAGA.sh - Provides a complete JSAGA installation with binaries and libraries
+2. ./setup_JSAGA.sh - Provides a complete JSAGA installation with binaries and libraries
 3. ./setup_GridEngine.sh - Install the Grid&Cloud Engine (necessary to target SSH, EMI/gLite, rOCCI infrastructures) 
 4. ./setup_OCCI.sh - Install the OCCI CLI with GSI necessary packages
 5. ./setup_FGService.sh - Execute only in case you want to run FutureGateway as a service
