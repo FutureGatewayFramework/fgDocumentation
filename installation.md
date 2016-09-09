@@ -28,7 +28,8 @@ Once installation files have been executed; it is necessary to log-out and login
 4) Go inside the APIServerDaemon directory and compile java code with: ant all
 5) Copy the generated war file into $CATALINA_HOME/webapps directory and check on $CATALINA_HOME/logs/catalina.out file that the installation is successful
 
-At this stage the user has a complete and operating FutureGateway environment
+At this stage the user has a complete and operating FutureGateway environment.
+As reference the reader can check existing hi-level scripts, in particular the file fgSetup.sh
 
 ## Ubuntu LTS 14.04 Server 
 
