@@ -4,9 +4,7 @@ FutureGateway can be installed on top of the following environments:
 * Enterprise Linux 6/7
 * Debian (Ubuntu)
 * MacOSX
-The installation procedure is managed by a set of bash scripts operating at different levels. Low level scripts are in charge to install FutureGateway components targeting the different operating system. High level scripts manage low level scripts to install the system for a specific operating system. In any case any hi-level script makes use of low-level files to perform the OS specific setup.
-
-
+The installation procedure is managed by a set of bash scripts operating at different levels. Low level scripts are in charge to install FutureGateway components targeting the different operating system. High level scripts manage low level scripts to install the system for a specific operating system.
 Installation process may differ in case there exists a specific OS/Architecture hi-level isntallation script.
 
 ## Using low level scripts
