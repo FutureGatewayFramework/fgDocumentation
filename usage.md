@@ -231,7 +231,7 @@ This is the way futuregateway manages authorization and authentication as defaul
 	    ]
 	}
 	
-2.a) It is possible to obtain a session tokens direcrtly from /auth call providing credentials as parameters (operation suggested only if the front
+2.a) It is possible to obtain a session tokens direcrtly from /auth call providing credentials as parameters (operation suggested only if the front is accessible via https.
 
 ## Portal Token Validation 
 
