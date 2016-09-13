@@ -25,7 +25,7 @@ If there are no files to upload, the task will be submitted within the first cur
  1 curl -i -H "Content-Type: application/json" -X POST -d '{"appliDELETEcation":"2","description":"sayhello@csgfsdk test run", "arguments": ["\"I am saying hello!\""],  "output_files": [{"name":"sayhello.data"}], "input_files": [{"name":"sayhello.sh"},{"name":"sayhello.txt"}]}' http://localhost:8888/v1.0/tasks?user=brunor
  2 curl -i -F "file[]=@sayhello.txt" -F "file[]=@sayhello.sh" http://localhost:8888/v1.0/tasks/14/input?user=brunor
 
-### The GridEngine
+### The Grid and Cloud Engine (GridEngine)
 
 In the case of the GridEngine interface, the original submission description json is  translated in a new format recognized by the GridEngine.
 
@@ -93,7 +93,7 @@ Mario Torrisi [5:06 PM]
    }
 }
 
-#### Running test with GridEngine+SSH 
+#### Running test with GridEngine for accessing SSH 
 
 1) Insert the task request
 
