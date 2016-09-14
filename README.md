@@ -8,7 +8,7 @@ The idea of the FutureGateway comes from a four years experiences gained with a 
 * Provide the most simple way to develop ScienceGateway applications.
 
 
-The FutureGateway comes with a set of configurable setup scripts allowing the installation of the system on several operating system. The access to the distributed infrastructures exploits the SAGA standard which can access to different middleware using a common set of API calls. There are many different implementations of SAGA and the FutureGateway structure allows to use any of them simply providing the proper interface.
+The FutureGateway comes with a set of configurable setup scripts allowing the installation of the system on several operating system. The access to the distributed infrastructures exploits the SAGA standard which can access to different middleware using a common set of API calls. There are many different implementations of SAGA and the FutureGateway structure allows to use any of them simply providing the proper interface. It is also possible to use other systems beside JSAGA to deal with distributed infrastructures thanks to the adoption of Executor Interfaces.
 The FutureGateway does not force adopters to use a particular kind of portal technology, this system could stay beside an existing portal or even assist a desktop or mobile application.
 The FutureGateway provides a set of REST APIs to interact with the distributed computing interface services.
 
