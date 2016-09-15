@@ -299,3 +299,44 @@ pdesc:    Parameter description
 
 ### Infrastructure tables
 
+
+* `infrastructure`: This table should have a different name like `application_infrastructure`, since the primary key of that table consists of the couple (application id, infrastructure id).
+This table contains just infrastructure generic information and flags like enabling or if the infrastructure is a virtual entity (something to be instantiated yet).
+```
+id          Infrastructure record identifier
+app_id      Application record identifier where this infrastructure belongs
+name        Name of this infrastructure
+description Infrastructure description
+creation    Creation timestamp
+enabled     Enable/Disable flag
+vinfra      True if this is a virtual infrastructure
+```
+
+Please notice that infrastructure sharing among different applications can be defined playing around the primary key (application id, infrastructure id). However the use of infrastructure sharing is highly not recommended.
+
+* `infrastructure_parameter`: In the form of (key name, key value) couples this table contains application infrastructure specific settings.
+```
+infra_id: Infrastructure record identifier
+param_id: Parameter index number
+pname:    Parameter name
+pvalue:   Parameter value
+pdesc:    Parameter description
+```
+
+* `infrastructure_parameter`: In the form of (key name, key value) couples this table contains application infrastructure specific settings.
+```
+infra_id: Infrastructure record identifier
+param_id: Parameter index number
+pname:    Parameter name
+pvalue:   Parameter value
+pdesc:    Parameter description
+```
+
+* `infrastructure_task`: The functionality related to this table is not yet supported and it is related to the use of virtual infrastructures. Whenever a virtual infrastructure instance will be created by a task this table will link the task requiring the infrastructure with an infrastructure dinamically created by an 'infrastructure' application (see outcome field in applciation table).
+```
+infra_id: Infrastructure record identifier
+task_id:  Task record identifier
+app_id:   Application id requesting this infrastructure
+creation: Infrastructure creation time
+```
+
