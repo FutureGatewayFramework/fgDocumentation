@@ -121,30 +121,34 @@ Most of APIServer configurations are included inside the `fgapiserver.conf` conf
 The configuration file consists of two kind of settings: the ones related to the APIServer and the ones related to the database. Below a description of available settings:
 
 APIServer settings:
-* fgapiver API Specifications version (default v1.0)
-* fgapiserver_name Name of the front-end service (just informative setting)
-* fgapisrv_host Use 0.0.0.0 to open the service to all hosts
-* fgapisrv_port Port number where the API server will be listening
-* fgapisrv_debug Enable/Disable debugging mode
-* fgapisrv_iosandbox Specify the mount point of task IO/Sandboxes
-* fgapisrv_geappid Grid&Cloud Engine application id
-* fgjson_indent JSON indent number of spaces
-* fgapisrv_key HTTPS mode; service certificate key path
-* fgapisrv_crt HTTPS mode; service certificate path
-* fgapisrv_logcfg Path to the log configuration file (use full path in wsgi conf)
-* fgapisrv_dbver APIServer database schema version
-* fgapisrv_secret Key value for baseline authN/Z service
-* fgapisrv_notoken Avoid token check
-* fgapisrv_notokenusr  APIServer user to be used when operating with no tokens
-* fgapisrv_lnkptvflag  Portal Token Vallidation service switch
-* fgapisrv_ptvendpoint PTV token check endpoint 
-* fgapisrv_ptvuser PTV Basic authentication user name
-* fgapisrv_ptvpass PTV Basic authentication password
-* fgapisrv_ptvdefusr PTV default user when token does not map with any registered APIServer user
-* fgapisrv_ptvmapfile JSON file containing user mapping configuration 
-
+* `fgapiver`: API Specifications version (default v1.0)
+* `fgapiserver_name`: Name of the front-end service (just informative setting)
+* `fgapisrv_host`: Use 0.0.0.0 to open the service to all hosts
+* `fgapisrv_port`: Port number where the API server will be listening
+* `fgapisrv_debug`: Enable/Disable debugging mode
+* `fgapisrv_iosandbox`: Specify the mount point of task IO/Sandboxes
+* `fgapisrv_geappid`: Grid&Cloud Engine application id
+* `fgjson_indent`: JSON indent number of spaces
+* `fgapisrv_key`: HTTPS mode; service certificate key path
+* `fgapisrv_crt`: HTTPS mode; service certificate path
+* `fgapisrv_logcfg`: Path to the log configuration file (use full path in wsgi conf)
+* `fgapisrv_dbver`: APIServer database schema version
+* `fgapisrv_secret`: Key value for baseline authN/Z service
+* `fgapisrv_notoken`: Avoid token check
+* `fgapisrv_notokenusr`:  APIServer user to be used when operating with no tokens
+* `fgapisrv_lnkptvflag`:  Portal Token Vallidation service switch
+* `fgapisrv_ptvendpoint`: PTV token check endpoint 
+* `fgapisrv_ptvuser`: PTV Basic authentication user name
+* `fgapisrv_ptvpass`: PTV Basic authentication password
+* `fgapisrv_ptvdefusr`: PTV default user when token does not map with any registered APIServer user
+* fgapisrv_ptvmapfile`: JSON file containing user mapping configuration 
+`
 Database settings
-* 
+* `fgapisrv_db_host`: Database hostname
+* `fgapisrv_db_port`: Database port number
+* `vfgapisrv_db_user`: Database user
+* `fgapisrv_db_pass`: Database password
+* `fgapisrv_db_name`: Database name
 
 ## APIServer Daemon (APIServerDaemon)
 The API Server Daemon consists of a web application, so that it is necessary to startup the application server (Tomcat). The virtual appliance is already configured to install and execute the daemon during the application server startup.
