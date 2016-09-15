@@ -162,10 +162,16 @@ To startup the application server you may use the standard scripts provided with
 It is important during development phases to constatly monitor the APIServer daemon activity, to accomplish that it is enough to have a look inside the application server log file.
 
 * Monitor the APIServer daemon activity:
-`tail -f $FGLOCATION/apache-tomcat-8.0.26/webapps/APIServerDaemon/WEB-INF/logs/APIServerDaemon.log`
+`tail -f $CATALINA_HOME/webapps/APIServerDaemon/WEB-INF/logs/APIServerDaemon.log`
 
 * Monitor the GridEngine activity:
-t.b.d.
+`tail -f $CATALINA_HOME/webapps/APIServerDaemon/WEB-INF/logs/GridEngineLog.log
+
+### APIServer Daemon configuration
+Also the APIServer daemon comes with several configuration settings stored in file: `$CATALINA_HOME/webapps/APIServerDaemon/WEB-INF/classes/it/infn/ct/APIServerDaemon.properties` and below reported:
+
+
+
 
 ## Security considerations
 Although the VM has been configured to limit hackers exposure, it is warmly suggested to comply with the EGI FedCloud [directives][EGIFCDR]
