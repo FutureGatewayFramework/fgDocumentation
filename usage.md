@@ -258,6 +258,10 @@ Another option is:
  1. Once logged place the section cookie in a 'cookie.txt' file
  2. In curl commands specify option: -b cookie.txt
 
+## Infrastructures
+Any installed application on the APIServer may have defined one or more infrastructures where it can execute. The current version of the software does not cover API specification on infrastructure management. At the moment it is only possible to create infrastructures when installing new applications where in the rest call instead to pass the infrastructure array of `<id>`s as reported in the specifications, it is necessary to pass an array of defined infrastructures. In this way there are no generic infrastructures to share among different applications but rather infrastructure defined at application level. This solution has been intentionally designed because by previous experiences in most of the cases each application requires its own specific settings. However the infrastructure sharing among application is still possible but only configuring properly the database directly.
+For more information about, please have a look on the 'Advanced operation' section.
+
 
 ## Advanced operations
 
@@ -278,13 +282,20 @@ enabled:     enable/disable flag
 ```
 * `application_file`: Store input files required by the application
 ```
-app_id: Applciation record identifier
-file_id: File index number
-file:  File name
-path:  Path of the file
+app_id:   Applciation record identifier
+file_id:  File index number
+file:     File name
+path:     Path of the file
 override: Force to use this file even if the user specify an alternative file
 ```
 * `application_parameter`: 
+```
+app_id:   Application record identifier
+param_id: Parameter index number
+pname:    Name of the parameter
+pvalue:   Value of the parameter
+pdesc:    Parameter description
+```
 
-
+### Infrastructure tables
 
