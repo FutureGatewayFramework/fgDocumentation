@@ -1,12 +1,14 @@
 # Usage
 
 APIs are compliant with specification defined in: http://docs.fgapis.apiary.io/#
+In particular this guide refers to specifications having version: v1.0.
 
 ## Tasks
 
 ### Submit tasks
 
-To create new task for application having id 1 (test entry for helloworld@localhost); no input files.
+Before submit any task, at least an application should be installed on the APIServer. Each application may have then one or several infrastructure defined where the application can execute. In APIServer terminology, the application may be a concrete running executable or an infrastructure.
+Below example shoes how to create a new task for application having id 1 (test entry for helloworld@localhost); no input files.
 
 curl -i -H "Content-Type: application/json" -X POST -d '{"application":"1","description":"helloworld@localhost test run","arguments": ["arg1","arg2","arg3"]}' http://localhost:8888/v1.0/tasks?user=brunor
 
