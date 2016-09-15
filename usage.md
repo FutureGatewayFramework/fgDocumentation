@@ -264,6 +264,59 @@ Another option is:
 Any installed application on the APIServer may have defined one or more infrastructures where it can execute. The current version of the software does not cover API specification on infrastructure management. At the moment it is only possible to create infrastructures when installing new applications where in the rest call instead to pass the infrastructure array of `<id>`s as reported in the specifications, it is necessary to pass an array of defined infrastructures. In this way there are no generic infrastructures to share among different applications but rather infrastructure defined at application level. This solution has been intentionally designed because by previous experiences in most of the cases each application requires its own specific settings. However the infrastructure sharing among application is still possible but only configuring properly the database directly.
 For more information about, please have a look on the 'Advanced operation' section.
 
+## Executor Interfaces
+
+Executor interfaces (EI)s are the way the APIServer uses to reach any kind of distributed computing resource through the use of any possible middleware component. EIs may deal with very flexible system like JSAGA and its adaptors like in GridEngine and SimpleTosca executor interfaces. In other cases EIs may use APIs or even CLI commands to manage the distributed infrastructure like in the case of the ToscaIDC which deals directly with TOSCA orchestrator REST API calls. Below sections describe how to configure these interfaces, in particular how to setup properly `infrastructure_parameters` values while describing a new APIServer application.
+
+
+### GridEngine
+The GridEngine executor interface target any distributed infrastructure that the Grid and Cloud component can address. The most popular and supported ones are: SSH, EMI/gLIte and rOCCI.
+
+* SSH Configuration
+. `jobservice`: ssh://\<ssh_host\>:\<ssh_port\>
+. `username`: the ssh username
+. `password`: the ssh password (clear text)
+
+* EMI/gLite Configuration
+. `jobservice`: wms endpoint
+. `bdii`: informatio provider endpoint
+. `eToken_host` eTokenServer hostnmae
+. `eToken_port` eTokenServer listening port
+. `eToken_id`: robot proxy identifier
+. `voms`: voms name
+. `voms_role`: the role associated to the voms
+. `rfc_proxy`: flag to request or not an RFC proxy
+
+* rOCCI Configuration
+. `jobservice`: rOCCI endpoint
+. `os_tpl`: OS template name
+. `resource_tpl`: resource template name
+. `attributes_title`: VM instance name
+. `eToken_host` eTokenServer hostnmae
+. `eToken_port` eTokenServer listening port
+. `eToken_id`: robot proxy identifier
+. `voms`: voms name
+. `voms_role`: the role associated to the voms
+. `rfc_proxy`: flag to request or not an RFC proxy
+
+### SimpleTosca
+SimpleTosca is a deprecated EI that has been used in early phases of FG development. This EI has been designed to cover explicitly the Molecular Dynamics (MD) use case and it is no longer used. The description of this EI is provided just for completeness.
+
+* Configuration
+. `tosca_endpoint`: The TOSCA endpoint
+. `tosca_token`:  Token for access TOSCA endpoint (unused)
+. `tosca_template`: The yaml file name describing the TOSCA resource
+. `tosca_parameters`: Parameters supported by jsaga-tosca-adaptor
+
+### ToscaIDC
+The ToscaIDC executor interface deprecates the SimpleTosca and it may cover any possibility offered by the TOSCA orchestrator since it is possible to send any possible yaml file containing any possible yaml input parameter.
+
+* Configuration
+. `tosca_endpoint`: The TOSCA endpoint
+. `tosca_template`: The yaml file name describing the TOSCA resource
+. `tosca_parameters`: TOSCA parameters (params=\<json file containing yaml input parameters\<)
+
+Inside directory $FGLOCATION/apps there are several sample application making use of different EIs. Any user may use one of these tester applications to generate as a template its own specific application use case.
 
 ## Advanced operations
 
