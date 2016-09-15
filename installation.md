@@ -95,21 +95,21 @@ Reattach the front-end process anytime with `screen -r fgAPIServer`
 An example of wsgi configuration in site configuration as reported below:
 ```
 <IfModule wsgi_module>
-                        WSGIDaemonProcess fgAPIServer  user=futuregateway group=futuregateway  processes=5 threads=10 home=/home/futuregateway
-                        WSGIProcessGroup futuregateway
-                        WSGIScriptAlias /apis /home/futuregateway/FutureGateway/fgAPIServer/fgapiserver.wsgi
-                        WSGIPassAuthorization On
+  WSGIDaemonProcess fgAPIServer  user=futuregateway group=futuregateway  processes=5 threads=10 home=/home/futuregateway
+  WSGIProcessGroup futuregateway
+  WSGIScriptAlias /apis /home/futuregateway/FutureGateway/fgAPIServer/fgapiserver.wsgi
+  WSGIPassAuthorization On
 
-                        <Directory /home/futuregateway/FutureGateway/fgAPIServer>
-                          WSGIProcessGroup fgAPIServer
-                          WSGIApplicationGroup %{GLOBAL}
-                          Order deny,allow
-                          Allow from all
-                          Options All
-                          AllowOverride All
-                          Require all granted
-                        </Directory>
-                </IfModule>
+  <Directory /home/futuregateway/FutureGateway/fgAPIServer>
+    WSGIProcessGroup fgAPIServer
+    WSGIApplicationGroup %{GLOBAL}
+    Order deny,allow
+    Allow from all
+    Options All
+    AllowOverride All
+    Require all granted
+  </Directory>
+</IfModule>
 ```
 Enabling the front-end to work with wsgi, it is no more necessary to use the screen section. To switch off the screen execution, just turn off the `ENABLEFRONTEND` (place zero value) flag in the service script file `/etc/init.d/futuregateway`.
 
