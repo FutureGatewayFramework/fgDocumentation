@@ -472,5 +472,21 @@ id:      DB Patch record identifier
 version: DB schema version reached by the patch
 name:    Name of the patch
 file:    File name that applied the patch
-applied: Timestamp when the record has been applied
+applied: Timestamp when the patch has been applied
 ```
+
+
+## Executor Interfaces
+Executor interface may have its own specific table or (as in the case of the Grid and Cloud engine) a whole database. The responsability to deal with these tables is in charge of the specific Executor Interface.
+
+* SimpleTosca/ToscaIDC: These Executor interfaces are using respectively the tables: simple_tosca and tosca_idc. Both tables have the same structure:
+```
+id:           Record identifier
+task_id:      Associated task record identifier
+tosca_id:     TOSCA UUID value
+tosca_status: Status reported by the orchestrator
+creation:     Record creation timestamp
+last_change:  Record change timestamp  
+```
+
+* UsersTrackingDatabase: The UsersTrackingDatabase is used by the Grid and Cloud Engine to keep track fo each activity performed by this system. This database has been developed to fullfil the EGI Traceability policies defined for scientific gateways. The Grid and Cloud Engine was the core component of the Catania Science Gateway Framework CSGF from where the FutureGateway takes its orings.
