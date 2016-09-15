@@ -463,3 +463,14 @@ user_id:  User record identifier associated to the token
 creation: Record creation timestamp
 expiry:   Token expiry timestamp  
 ```
+
+## DB Schema
+
+* db_patches: This table is used by the database schema updater script available under `$FGLOCATION/fgAPIServer/db_patches` directory. It stores all patches applied to the original baseline database schem installation.
+```
+id:      DB Patch record identifier
+version: DB schema version reached by the patch
+name:    Name of the patch
+file:    File name that applied the patch
+applied: Timestamp when the record has been applied
+```
