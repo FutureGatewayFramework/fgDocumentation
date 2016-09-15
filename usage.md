@@ -458,6 +458,30 @@ creation: Record creation timestamp
 modified: Record change timestamp
 ```
 
+Current defined roles are:
+
+* `app_install`: The user can install applications       
+* `app_change`: The user chan perform changes to the applciations
+* `app_delete`:  The user can delete applications
+* `app_view`:  The user can see details of an application
+* `app_run`: The user can run the application          
+* `infra_add`: The user can add an infrastructure        
+* `infra_change`:  The user chang make changes to an infrastructure
+* `infra_delete`: The user can delete an infrastructure
+* `infra_view`:  The user can see details of an infrastructure
+* `infra_attach`: The user can attach an infrastructure to an application/task
+* `infra_detach`:  The user can detach an infrastructure to an application/task
+* `task_delete`: The user can delete a task
+* `task_view`: The user can see task details        
+* `task_userdata`: The user can access to task userdata    
+* `user_add`: The user can add other users
+* `user_del`:  The user can remove other users
+* `user_change`: The user can change details of another user
+* `group_change`: The user can change group settings
+* `role_change`:  The user can change roles on groups
+* `user_impersonate`:  The user can impersonate a different user
+* `group_impersonate`: The user can impersonate a different group
+
 *  fg_token: Store associations between APIServer users and token received by the front-end (fgAPIServer).
 ```
 token:    Token value
