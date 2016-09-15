@@ -165,6 +165,8 @@ Please be aware that application installation API does not take care of FutureGa
 
 Inside `$FGLOCATION/fgAPIServer/`apps directory, there are several applications that can be used as template to generate new applications. Once selected the most appropriate application to use, just make a full copy of the application direcotry, provide to the new directory the application name and go inside of it. In the application directory there are two files: setup\_app.sh and stress\_test.sh. Modify the first file to setup properly the new application, use the second file to execute the new application on the system. The second script can be executed only after the setup\_app.sh script has been executed. The setup_app.sh script contains several configuration settings and it can be executed specifying as argument a session token (with no 'Authentication: Bearer' string).
 
+After the applciation is created, it is important to assign this application to a group, so that their members can perform any allowed activity on it (See advanced operations).
+
 Delete
 
 `curl -i -H "Content-Type: application/json" -X DELETE`
