@@ -78,7 +78,7 @@ Once finished the installation it is important to exit from any ssh connection a
 In order to test FutureGateway REST APIs, several services should be started before; in particular:
 
 1. The REST APIs [front-end][FGAPPDB]
-2. The API [ServerDaemon][FGASRVD]
+2. The API Server Daemon [ServerDaemon][FGASRVD]
 
 ## REST APIs front-end (fgAPIServer)
 In a production environment the API server front-end must be configured with a dedicated wsgi configuration inside the web server. However for testing purposes the front-end can be executed in stand-alone mode with the following set of commands:
@@ -111,7 +111,40 @@ An example of wsgi configuration in site configuration as reported below:
   </Directory>
 </IfModule>
 ```
+
+An example of wsgi configuration is also available under `$FGLOCATION/fgAPIServer.conf`.
 Enabling the front-end to work with wsgi, it is no more necessary to use the screen section. To switch off the screen execution, just turn off the `ENABLEFRONTEND` (place zero value) flag in the service script file `/etc/init.d/futuregateway`.
+
+### APIServer configuration
+
+Most of APIServer configurations are included inside the `fgapiserver.conf` configuration file. Before to execute the front-end it is important to setup this file properly.
+The configuration file consists of two kind of settings: the ones related to the APIServer and the ones related to the database. Below a description of available settings:
+
+APIServer settings:
+* fgapiver API Specifications version (default v1.0)
+* fgapiserver_name Name of the front-end service (just informative setting)
+* fgapisrv_host Use 0.0.0.0 to open the service to all hosts
+* fgapisrv_port Port number where the API server will be listening
+* fgapisrv_debug Enable/Disable debugging mode
+* fgapisrv_iosandbox Specify the mount point of task IO/Sandboxes
+* fgapisrv_geappid Grid&Cloud Engine application id
+* fgjson_indent JSON indent number of spaces
+* fgapisrv_key HTTPS mode; service certificate key path
+* fgapisrv_crt HTTPS mode; service certificate path
+* fgapisrv_logcfg Path to the log configuration file (use full path in wsgi conf)
+* fgapisrv_dbver APIServer database schema version
+* fgapisrv_secret Key value for baseline authN/Z service
+* fgapisrv_notoken Avoid token check
+* fgapisrv_notokenusr  APIServer user to be used when operating with no tokens
+* fgapisrv_lnkptvflag  Portal Token Vallidation service switch
+* fgapisrv_ptvendpoint PTV token check endpoint 
+* fgapisrv_ptvuser PTV Basic authentication user name
+* fgapisrv_ptvpass PTV Basic authentication password
+* fgapisrv_ptvdefusr PTV default user when token does not map with any registered APIServer user
+* fgapisrv_ptvmapfile JSON file containing user mapping configuration 
+
+Database settings
+* 
 
 ## APIServer Daemon (APIServerDaemon)
 The API Server Daemon consists of a web application, so that it is necessary to startup the application server (Tomcat). The virtual appliance is already configured to install and execute the daemon during the application server startup.
