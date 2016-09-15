@@ -71,6 +71,13 @@ In case it is needed to assign a public IP to the given resource, execute:
 
 `occi --endpoint $OCCI_ENDPOINT --auth x509 --user-cred $USER_CRED --voms --action link --resource $OCCI_RES --link /network/public`
 
+### Security considerations
+Although the VM has been configured to limit hackers exposure, it is warmly suggested to comply with the EGI FedCloud [directives][EGIFCDR]
+
+[FGAPIFE]: <https://github.com/FutureGateway/fgAPIServer>
+[FGASRVD]: <https://github.com/FutureGateway/APIServerDaemon>
+[EGIFCDR]: <https://wiki.egi.eu/wiki/Virtual_Machine_Image_Endorsement#Hardening_guidelines>
+
 # Suggested procedures
 The installation scritps will instantiate the full FutureGateway environment extracting anything from GITHub, so that fresh installations will contain the latest available packages version. To know about the status or the end of the installation procedure, please check the output of the scripit.
 Once finished the installation it is important to exit from any ssh connection active before the installation procedure and re-log again. During the re-connection, ssh will recognize a host identification change, then proceed to accept the new identity. In case the script have been executed from root it is enough to change the user with `su - futuregateway`.
@@ -195,9 +202,4 @@ Also the APIServer daemon comes with several configuration settings stored in fi
 
 
 
-## Security considerations
-Although the VM has been configured to limit hackers exposure, it is warmly suggested to comply with the EGI FedCloud [directives][EGIFCDR]
 
-[FGAPIFE]: <https://github.com/FutureGateway/fgAPIServer>
-[FGASRVD]: <https://github.com/FutureGateway/APIServerDaemon>
-[EGIFCDR]: <https://wiki.egi.eu/wiki/Virtual_Machine_Image_Endorsement#Hardening_guidelines>
