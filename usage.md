@@ -259,11 +259,32 @@ Another option is:
  2. In curl commands specify option: -b cookie.txt
 
 
+## Advanced operations
 
+The APIServer manages users, groups and roles however API specs do not take in account these entities. For instance when a new application is installed it is necessary to enable a group to grant execution rights to the new application. All these operations not foreseen by the API specifications must be performed managing directly the database. For this reason it is important for developers and administrators to know the APIServer database schema.
 
+### Application tables
 
+These tables are collecting the information related to APIServer installed applications
 
-
+* `application`: Store generic application information
+```
+id:          record identifier
+name:        application name
+description: application description
+outcome:     explains the kind of application: (JOB|INFRASTRUCTURE)
+creation:    application installation timestamp
+enabled:     enable/disable flag
+```
+* `application_file`: Store input files required by the application
+```
+app_id: Applciation record identifier
+file_id: File index number
+file:  File name
+path:  Path of the file
+override: Force to use this file even if the user specify an alternative file
+```
+* `application_parameter`: 
 
 
 
