@@ -52,8 +52,8 @@ Before to execute `fgSetup.sh` it is recommended to open it and verify inside it
 ## FedCloud Installation
 
 The FutureGateway portal can be instantiated by an existing EGI FedCloud virtual appliance named: [FutureGateway][FGAPPDB].
-The virtual appliance is based on an Ubuntu-server 14.04 and it requires a specific cloud-init' user-data file in order to setup it properly.
-The principal aim of the FutureGateway virtual appliance is to allow Science Gateway application developers to make practice with FutureGateway REST APIs without takin care of the whole system intallation.
+The virtual appliance is based on an Ubuntu-server 14.04 and it requires a specific cloud-init' user-data file in order to setup it properly while instantiating the machine.
+The principal aim of the FutureGateway virtual appliance is to allow Science Gateway application developers to make practice with FutureGateway REST APIs without taking care of the whole system intallation.
 
 Below the commands to correctly instantiate the VM:
 
@@ -92,8 +92,29 @@ In a production environment the API server front-end must be configured with a d
 Detach with \<ctrl-a\>\<ctrl-d\>
 Reattach the front-end process anytime with `screen -r fgAPIServer`
 
+An example of wsgi configuration in site configuration as reported below:
+```
+<IfModule wsgi_module>
+                        WSGIDaemonProcess fgAPIServer  user=futuregateway group=futuregateway  processes=5 threads=10 home=/home/futuregateway
+                        WSGIProcessGroup futuregateway
+                        WSGIScriptAlias /apis /home/futuregateway/FutureGateway/fgAPIServer/fgapiserver.wsgi
+                        WSGIPassAuthorization On
+
+                        <Directory /home/futuregateway/FutureGateway/fgAPIServer>
+                          WSGIProcessGroup fgAPIServer
+                          WSGIApplicationGroup %{GLOBAL}
+                          Order deny,allow
+                          Allow from all
+                          Options All
+                          AllowOverride All
+                          Require all granted
+                        </Directory>
+                </IfModule>
+```
+Enabling the front-end to work with wsgi, it is no more necessary to use the screen section. To switch off the screen execution, just turn off the `ENABLEFRONTEND` (place zero value) flag in the service script file `/etc/init.d/futuregateway`.
+
 ## APIServer Daemon (APIServerDaemon)
-The API Server Daemon conists of a web application, so that it is necessary to startup the application server (Tomcat). The virtual appliance is already configured to install and execute the daemon during the application server startup.
+The API Server Daemon consists of a web application, so that it is necessary to startup the application server (Tomcat). The virtual appliance is already configured to install and execute the daemon during the application server startup.
 To startup the application server you may use the standard scripts provided with Tomcat or you may use the 'start\_tomcat' utility:
 
 * Startup application server:
