@@ -427,6 +427,13 @@ creation Group creation timestamp
 modified Group record change timestamp
 ```
 
+* fg_user_group: Link available users with available groups
+```
+user_id  User record identifier
+group_id Group record identifier
+creation Link creation timestamp
+```
+
 * fg_group_apps: Associate an application to an existing group
 ```
 group_id: Group record identifier
