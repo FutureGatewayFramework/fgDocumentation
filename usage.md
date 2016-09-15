@@ -516,3 +516,30 @@ last_change:  Record change timestamp
 ```
 
 * UsersTrackingDatabase: The UsersTrackingDatabase is used by the Grid and Cloud Engine component to keep track of each activity performed by this system. This database has been developed to fullfil the EGI Traceability policies defined for scientific gateways. The Grid and Cloud Engine was the core component of the Catania Science Gateway Framework CSGF from where the FutureGateway takes its orings. The GridEngine executor interface deals with the Grid and Cloud Engine component in order to target the following kind of distributed infrastructures: SSH, EMI/gLite, rOCCI. All of them are reached instructing properly the JSAGA component through the use of the corresponding JSAGA adaptor. This involves that applications targeting the GridEngine executor interface may run on all of those infrastructure just filling up the `infrastructure` and `infrastructure_parameters_tables`. This kind  of configuration is visibile in the baseline setup with the `sayhello` application. When submitting a task linked to many infrastructures, only one of them will be selected using a random strategy. This behavior may be changed in the future with more sophisticated algorithms depending for instance on the loud charge of each targeted infrastructures.
+
+## fgTools
+
+APIServer software suite offers the fgTools repository where can be located any utility and helper tool. At the moment only two utilities are available:
+
+* `pushProxy`: This is an utility developed at the very ealry develpments on TOSCA orchestrator. The utility has to be configured inside a cron job in order to timely send to a given endpoint a robotProxy extracted from the eTokenServer host.
+
+* `updateCode`: This utility helps FG developers to update source packages remotely. It allows to send local modifies APIServerDaemon sources and recompile and install them on the remote service. It provides the same capability for other sources like adaptors and the front-end. It also provide options to send and receive files from/to the remote FG machine.
+Below the help message:
+```
+usage: updateCode  -h <ip|host>                  # FutureGateway host
+                    [-p <ssh port>] (default 22) # FutureGateway ssh port
+                    [-c <fgAPIServer             # code: APIServer front-end
+                        |APIServerDaemon         # code: APIServerDaemon
+                        |jsaga-adaptor-rocci>    # code: rOCCI adaptor
+                        |jsaga-adaptor-tosca>]   # code: tosca adaptor
+                    [ -f <file/directory path>   # Upload Local file/dir 
+                    [-t <destination dir> ]]     # \$FGLOCATION/<file/dir>
+                    [-u <file/directory path>]   # Download file/dir from remote
+                    [-a]                         # Update all components
+                    [-s]                         # Start futuregateway service
+This script copies the specified source package into specified remote host
+using ssh connection, for this reason it is recommended to exchange the
+ssh keys between source and destination hosts
+By default the script stops the futuregateway service leaving it not running
+unless the the option -s is specified
+```
