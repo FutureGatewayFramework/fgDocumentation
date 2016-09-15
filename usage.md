@@ -385,3 +385,74 @@ data_type:   Type of data (bynary, json, plain/text, ...)
 creation:    Creation time of the data
 last_change: Last change made on the record; data values may be overwritten
 ```
+
+## Queue table
+
+* as_queue: The APIServer queue table keeps track of any command sent to the APIServer Daemon. This table normally stores activities to be performed on tasks: creation, deletion, etc. This table  can be used also to extend the APIServer daemon functionalities (See for instance the executor interfaces). The queue is filled by the front-end (fgAPIServer) and consumed buy the queue polling daemon (APIServerDaemon).
+```
+task_id:       Task record identifier
+target_id:     Target executor interface record identifier
+target:        Executor interface name
+action:        Command to execute
+status:        Status of the command
+target_status: Status of the command in the targeted infrastructure
+retry:         Current number of command retry
+creation:      Record creation timestamp
+last_change:   Timestamp of the last hange done on the record
+check_ts:      Timestamp of the last check done on the record
+action_info:   Directory path assigned to the task
+```
+
+## Users, Groups and Roles
+The APIServer manages its own set of users, groups and roles. The baseline setup creates few users examples providing each a different set of privileges. Different sets of privileges may be assigned to groups and groups can be assigned to users.
+
+* fg_user: Stores generic information about the APIServer registered user.
+```
+id         User record identifier
+name       Name (nick) of the user
+password   Shadowed user password 
+first_name First name of the user
+last_name  Last name of the user
+institute  User insitution
+mail       User email address
+creation   User registration timestamp
+modified   User record change timestamp
+```
+
+* fg_group: Stores generic information about the stored groups.
+```
+id       Group record identifier
+name     Name of the group
+creation Group creation timestamp
+modified Group record change timestamp
+```
+
+* fg_group_apps: Associate an application to an existing group
+```
+group_id: Group record identifier
+app_id:   Application record identifier
+creation: Record creation timestamp
+```
+
+* fg_group_role: Store any role associated to the groups
+```
+group_id: Group record identifier
+role_id:  Role record identifier
+creation: Record creation timestamp 
+```
+
+* fg_role: Store any possible role foreseen by the APIServer (Not all roles defined by the baseline setup are supported in current implementation).
+```
+id:       Role record identifier
+name:     Name of the role
+creation: Record creation timestamp
+modified: Record change timestamp
+```
+
+*  fg_token: Store associations between APIServer users and token received by the front-end (fgAPIServer).
+```
+token:    Token value
+user_id:  User record identifier associated to the token
+creation: Record creation timestamp
+expiry:   Token expiry timestamp  
+```
