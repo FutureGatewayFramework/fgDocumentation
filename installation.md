@@ -121,6 +121,7 @@ Most of APIServer configurations are included inside the `fgapiserver.conf` conf
 The configuration file consists of two kind of settings: the ones related to the APIServer and the ones related to the database. Below a description of available settings:
 
 APIServer settings:
+
 * `fgapiver`: API Specifications version (default v1.0)
 * `fgapiserver_name`: Name of the front-end service (just informative setting)
 * `fgapisrv_host`: Use 0.0.0.0 to open the service to all hosts
@@ -143,7 +144,8 @@ APIServer settings:
 * `fgapisrv_ptvdefusr`: PTV default user when token does not map with any registered APIServer user
 * fgapisrv_ptvmapfile`: JSON file containing user mapping configuration 
 `
-Database settings
+Database settings:
+
 * `fgapisrv_db_host`: Database hostname
 * `fgapisrv_db_port`: Database port number
 * `vfgapisrv_db_user`: Database user
@@ -170,6 +172,26 @@ It is important during development phases to constatly monitor the APIServer dae
 ### APIServer Daemon configuration
 Also the APIServer daemon comes with several configuration settings stored in file: `$CATALINA_HOME/webapps/APIServerDaemon/WEB-INF/classes/it/infn/ct/APIServerDaemon.properties` and below reported:
 
+* `apisrv_dbhost`: APIServer database host
+* `apisrv_dbport`: APIServer database port number
+* `apisrv_dbuser`: APIServer database user name
+* `apisrv_dbpass`: APIServer database user password
+* `apisrv_dbname`: APIServer database name
+* `apisrv_dbver`: APIServer database schema version
+* `asdMaxThreads`:  Maximum number of allowed threads
+* `asdCloseTimeout`: Timeout during daemon stopping to kill pending processes
+* `gePollingDelay`: How many seconds the polling thread waits before starting a new cycle
+* `gePollingMaxCommands`: Maximum number of queue commands to extract from the queue for each polling cycle
+* `asControllerDelay`: How many seconds the controller waits before starting a new cycle
+* `asControllerMaxCommands`: How many commands should be extracted from queue per cycle
+* `asTaskMaxRetries`: Maximum number of queue commands retries in case of failure
+* `asTaskMaxWait`: How many seconds a failed task has to wait after its execution for the next retry
+* `utdb_jndi`: Grid and Cloud Engine database connection pool name (goes alternatively to below utdb_* settings)
+* `utdb_host`: Grid and Cloud Engine database database host
+* `utdb_port`: Grid and Cloud Engine database database port number
+* `utdb_user`: Grid and Cloud Engine database database user name
+* `utdb_pass`: Grid and Cloud Engine database database user password
+* `utdb_name`: Grid and Cloud Engine database database name
 
 
 
