@@ -299,7 +299,6 @@ pdesc:    Parameter description
 
 ### Infrastructure tables
 
-
 * `infrastructure`: This table should have a different name like `application_infrastructure`, since the primary key of that table consists of the couple (application id, infrastructure id).
 This table contains just infrastructure generic information and flags like enabling or if the infrastructure is a virtual entity (something to be instantiated yet).
 ```
@@ -340,3 +339,49 @@ app_id:   Application id requesting this infrastructure
 creation: Infrastructure creation time
 ```
 
+## Task related tables
+
+* task: Generic information about task activity is registered in this table.
+```
+id:          Task record identifier
+creation:    Task creation timestamp
+last_change: Last change timestamp done on the task
+app_id:      Application record identifier related to this task
+description: Task description
+status:      Status of the task
+iosandbox:   Directory path that store any file related to this task
+user:        User associated to this task (may differ from token recognized user)
+```
+* task_arguments: Each task may spevify different arguments stored in the form o
+```
+task_id:  Task record identifier
+arg_id:   Argument index number
+argument: Argument value
+```
+* task_input_file: Task specific input files
+```
+task_id: Task record identifier 
+file_id: File index number
+file: Name of the file
+path: Directory path where file is located
+```
+* task_output_file: Task specific output files
+```
+task_id: Task record identifier 
+file_id: File index number
+file: Name of the file
+path: Directory path where file is located
+```
+
+* runtime_data: This table is related to tasks as well, it stores in the form of (key name, key value) any information related to the task.
+```
+task_id:     Task record identifier
+data_id:     Runtime data index number
+data_name:   Runtime data name
+data_value:  Runtime data value
+data_desc:   Runtime data description
+data_proto:  Access protocol to access the data
+data_type:   Type of data (bynary, json, plain/text, ...)
+creation:    Creation time of the data
+last_change: Last change made on the record; data values may be overwritten
+```
