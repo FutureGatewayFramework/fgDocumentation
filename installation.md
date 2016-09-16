@@ -39,7 +39,7 @@ In order to install the FutureGateway, just execute as root user:
 # adduser --disabled-password --gecos "" futuregateway
 # mkdir -p /home/futuregateway/.ssh
 # chown futuregateway:futuregateway /home/futuregateway/.ssh
-# wget https://github.com/FutureGateway/PortalSetup/raw/master/Ubuntu_14.04/fgSetup.sh
+# wget https://github.com/indigo-dc/PortalSetup/raw/master/Ubuntu_14.04/fgSetup.sh
 # chmod +x fgSetup.sh
 # cat /dev/zero | ssh-keygen -q -N ""
 # cat /root/.ssh/id_rsa.pub >> /home/futuregateway/.ssh/authorized_keys
@@ -78,8 +78,8 @@ Although the VM has been configured to limit hackers exposure, it is warmly sugg
 [FGASRVD]: <https://github.com/FutureGateway/APIServerDaemon>
 [EGIFCDR]: <https://wiki.egi.eu/wiki/Virtual_Machine_Image_Endorsement#Hardening_guidelines>
 
-# Suggested procedures
-The installation scritps will instantiate the full FutureGateway environment extracting anything from GITHub, so that fresh installations will contain the latest available packages version. To know about the status or the end of the installation procedure, please check the output of the scripit.
+### Suggested procedures
+The installation scritps will instantiate the full FutureGateway environment extracting anything from GITHub, so that fresh installations will contain the latest available packages version or in alternative the version specified in the setup scripts. To know about the status or the end of the installation procedure, please check the output of the scripit.
 Once finished the installation it is important to exit from any ssh connection active before the installation procedure and re-log again. During the re-connection, ssh will recognize a host identification change, then proceed to accept the new identity. In case the script have been executed from root it is enough to change the user with `su - futuregateway`.
 
 In order to test FutureGateway REST APIs, several services should be started before; in particular:
