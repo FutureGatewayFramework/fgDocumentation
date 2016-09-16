@@ -261,7 +261,7 @@ Another option is:
  2. In curl commands specify option: -b cookie.txt
 
 ## Infrastructures
-Any installed application on the APIServer may have defined one or more infrastructures where it can execute. The current version of the software does not cover API specification on infrastructure management. At the moment it is only possible to create infrastructures when installing new applications where in the rest call instead to pass the infrastructure array of `<id>`s as reported in the specifications, it is necessary to pass an array of defined infrastructures. In this way there are no generic infrastructures to share among different applications but rather infrastructure defined at application level. This solution has been intentionally designed because by previous experiences in most of the cases each application requires its own specific settings. However the infrastructure sharing among application is still possible but only configuring properly the database directly.
+Any installed application on the APIServer may have defined one or more infrastructures where it can execute. The current version of the software does not cover API specification on infrastructure management. At the moment it is only possible to create infrastructures when installing new applications where in the rest call instead to pass the infrastructure array of `\<id\>`s as reported in the specifications, it is necessary to pass an array of defined infrastructures. In this way there are no generic infrastructures to share among different applications but rather infrastructure defined at application level. This solution has been intentionally designed because by previous experiences in most of the cases each application requires its own specific settings. However the infrastructure sharing among application is still possible but only configuring properly the database directly.
 For more information about, please have a look on the 'Advanced operation' section.
 
 ## Executor Interfaces
@@ -574,9 +574,9 @@ last_change:  Record change timestamp
 
 APIServer software suite offers the fgTools repository where can be located any utility and helper tool. At the moment only two utilities are available:
 
-* `pushProxy`: This is an utility developed at the very ealry develpments on TOSCA orchestrator. The utility has to be configured inside a cron job in order to timely send to a given endpoint a robotProxy extracted from the eTokenServer host.
+* `pushProxy`: This is an utility developed at the very ealry developments on TOSCA orchestrator. The utility has to be configured inside a cron job in order to timely send to a given endpoint a robotProxy extracted from the eTokenServer host.
 
-* `updateCode`: This utility helps FG developers to update source packages remotely. It allows to send local modifies APIServerDaemon sources and recompile and install them on the remote service. It provides the same capability for other sources like adaptors and the front-end. It also provide options to send and receive files from/to the remote FG machine.
+* `updateCode`: This utility helps FG developers to update source packages remotely. It allows to send local modified APIServerDaemon sources, recompiling and installing them on the remote service. It provides the same capability for other sources like adaptors and the front-end. It also provide options to send and receive files from/to the remote FG machine.
 Below the help message:
 ```
 usage: updateCode  -h <ip|host>                  # FutureGateway host
