@@ -8,7 +8,7 @@ The installation procedure is managed by a set of bash scripts operating at diff
 Installation process may differ in case there exists a specific OS/Architecture hi-level isntallation script.
 
 ## Using low level scripts
-Architectures not targeted by hi-level scripts maybe installed as well, directly using low level scripts. These installation files can be used on all those OS platforms using as package management tools: yum, apt and brew; thus: EL OSes (i.e RedHat, CentOS, Debian, MacOSX and potentially Windows under Cygwin environment).
+Architectures not targeted by hi-level scripts maybe installed as well, directly using low level scripts available at: https://github.com/indigo-dc/PortalSetup. These installation files can be used on all those OS platforms using as package management tool: yum, apt and brew; thus: EL OSes (i.e RedHat, CentOS, Debian, MacOSX and potentially Windows under Cygwin environment).
 In order to use low level scritps, the user has to download from the git repository all files having the name 'setup\_\<component\>.sh'. Then the user can install the system just executing each script in the order:
 
 1. ./setup_FGPortal.sh - Install the core components of the system and preparing the necessary environment
@@ -48,6 +48,47 @@ In order to install the FutureGateway, just execute as root user:
 # ./fgSetup.sh futuregateway futuregateway <your ssh port> $(cat /root/.ssh/id_rsa.pub)
 ```
 Before to execute `fgSetup.sh` it is recommended to open it and verify inside its content, the default settings. Executing the last statement above, the installation procedure should start and it requires a while to complete.
+
+## CentOS 7
+
+To install FutureGateway on this release it is necessary to execute low level scripts, knowing that there are several limitations at the moment below reported:
+
+1. It is not possible to install `setup_OCCI.sh` since till now fedcloud setup scripts are not supporting yet this platform (max CentOS 6). This also means that unless switching off `USEFEDCLOUD` flag in `seutp_config.sh` file (not recommended solution) VOMS support will be not configured.
+2. It is not possible to execute `setup_FGService.sh` since CentOS 7 uses systemctl way to configure services
+
+Before to execute `setup_\*.sh` scripts; please execute the following script that ensures all required packages will be installed.
+
+```
+sudo yum install -y epel-release
+sudo yum clean all
+sudo yum update
+PKGS="wget \
+openssh-clients \
+openssh-server \
+mariadb \
+mariadb-server \
+java-1.7.0-openjdk \
+ruby-devel \
+httpd \
+mod_wsgi \
+python \
+python-pip \
+python-flask \
+python-crypto \
+MySQL-python \
+git \
+openldap \
+openvpn \
+screen \
+jq"
+for pkg in $PKGS; do
+  yum install -y $pkg 
+done
+sudo yum groupinstall -y "Development Tools"
+sudo pip install flask-login
+sudo systemctl enable mariadb
+sudo systemctl start mariadb
+```
 
 ## FedCloud Installation
 
