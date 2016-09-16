@@ -1,4 +1,4 @@
-# Installation
+# Deployment guide
 
 FutureGateway can be installed on top of the following environments:
 * Enterprise Linux 6/7
