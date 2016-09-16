@@ -11,7 +11,8 @@ Installation process may differ in case there exists a specific OS/Architecture 
 Architectures not targeted by hi-level scripts maybe installed as well, directly using low level scripts available at: https://github.com/indigo-dc/PortalSetup. These installation files can be used on all those OS platforms using as package management tool: yum, apt and brew; thus: EL OSes (i.e RedHat, CentOS, Debian, MacOSX and potentially Windows under Cygwin environment).
 In order to use low level scritps, the user has to download from the git repository all files having the name 'setup\_\<component\>.sh'. Then the user can install the system just executing each script in the order:
 
-1. ./setup_FGPortal.sh - Install the core components of the system and preparing the necessary environment
+1. git clone https://github.com/indigo-dc/PortalSetup && cd PortalSetup 
+2. ./setup_FGPortal.sh - Install the core components of the system and preparing the necessary environment
 2. ./setup_JSAGA.sh - Provides a complete JSAGA installation with binaries and libraries
 3. ./setup_GridEngine.sh - Install the Grid&Cloud Engine (necessary to target SSH, EMI/gLite, rOCCI infrastructures) 
 4. ./setup_OCCI.sh - Install the OCCI CLI with GSI necessary packages
@@ -131,6 +132,8 @@ In order to test FutureGateway REST APIs, several services should be started bef
 ## REST APIs front-end (fgAPIServer)
 In a production environment the API server front-end must be configured with a dedicated wsgi configuration inside the web server. However for testing purposes the front-end can be executed in stand-alone mode with the following set of commands:
 
+* If not yet installed by a setup script, extract from git the sources:
+`git clone https://github.com/indigo-dc/fgAPIServer $FGLOCATION/fgAPIServer`
 * Instantiate a screen section:
 `screen -S fgAPIServer`
 * Execute the API REST front-end:
@@ -204,6 +207,9 @@ Database settings:
 The API Server Daemon consists of a web application, so that it is necessary to startup the application server (Tomcat). The virtual appliance is already configured to install and execute the daemon during the application server startup.
 To startup the application server you may use the standard scripts provided with Tomcat or you may use the 'start\_tomcat' utility:
 
+* If not yet installed by a setup script, extract from git the sources:
+`git clone https://github.com/indigo-dc/APIServerDaemon $FGLOCATION/APIServerDaemon`
+* If necessary compile its code going inside `$FGLOCATION/APIServerDaemon` direcory and executing `ant all`. Then copy the generated war file in the directory `$CATALINA_HOME/webapps/`
 * Startup application server:
 `start_tomcat`. To manage daemon activity you can use the Tomcat manager front-end with `http://<VM_IP>:8080/manager` (default credentials are tomcat/tomcat).To stop Tomcat you can use `stop_tomcat` then please verify its java process with `ps -ef | grep tomcat | grep java` if the process still perist you may use '`killjava` command.
 
