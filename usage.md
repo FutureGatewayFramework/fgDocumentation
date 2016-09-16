@@ -1,4 +1,4 @@
-# Usage
+# User guide
 
 APIs are compliant with specification defined in: http://docs.fgapis.apiary.io/#
 In particular this guide refers to specifications having version: v1.0.
