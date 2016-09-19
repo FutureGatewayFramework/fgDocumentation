@@ -7,6 +7,26 @@ FutureGateway can be installed on top of the following environments:
 The installation procedure is managed by a set of bash scripts operating at different levels. Low level scripts are in charge to install FutureGateway components targeting the different operating system. High level scripts manage low level scripts to install the system for a specific operating system.
 Installation process may differ in case there exists a specific OS/Architecture hi-level isntallation script.
 
+## Script structure
+
+There are two kind of installation scripts; hi-level and low-level.
+Hi level are mentioned to cover a specific OS/Linux distro; low level scripts are used by hi-level scripts. The principal aim of hi-level scripts is to deal with mandatory packages and prepare the right configuration for low level scripts; see file: 'setup_config.sh'.
+
+There is no priority among low level setup scripts; except for setup_FGPortal.sh that must be the 1st to be executed. However the suggested priority is:
+
+1. `setup_FGPortal.sh` - The main script, it takes care of Tomcat, Liferay and its SDK (optional), Other Development tools (ant, maven).
+2. `setup_JSAGA.sh` - This script configure the environment to host JSAGA, including binariesm, libraries and taking care of the required UnlimitedJCEPolicy accordingly to the current JAVA version
+3. `setup_GridEngine.sh` - This installs the Grid and Cloud Engine component (if requested)
+4. `setup_OCCI.sh` - This is in charge to prepare the GSI environment (VOMS included) and the OCCI CLI interface. It may use the fed cloud installation or a manual setup (not really suggested, but necessary for CentOS7).
+5. `setup_fgService.sh` - For OSes supporting the /etc/init.d service support this installs the service control script
+
+All setup scripts have the same structure. Each installation step is managed by a dedicated bash function and each function can execute only once even running the setup script more times. This protection method is managed by a setup file named: '.fgSetup'.
+The sequence of these function is managed by the scrip body at the bottom of the file in the form of an and-chain:
+
+  `script_function_1 && script_function_2 && ... && script_function_n`
+
+So that if one of the function fails the script terminates giving the opportunity to fix the issue and restart the installation.
+
 ## Using low level scripts
 Architectures not targeted by hi-level scripts maybe installed as well, directly using low level scripts available at: https://github.com/indigo-dc/PortalSetup. These installation files can be used on all those OS platforms using as package management tool: yum, apt and brew; thus: EL OSes (i.e RedHat, CentOS, Debian, MacOSX and potentially Windows under Cygwin environment).
 In order to use low level scritps, the user has to download from the git repository all files having the name 'setup\_\<component\>.sh'. Then the user can install the system just executing each script in the order:
@@ -30,25 +50,6 @@ Once installation files have been executed; it is necessary to log-out and login
 At this stage the user has a complete and operating FutureGateway environment.
 As reference the reader can check existing hi-level scripts, in particular the file fgSetup.sh
 
-### Low level script structure
-
-There are two kind of installation scripts; hi-level and low-level.
-Hi level are mentioned to cover a specific OS/Linux distro; low level scripts are used by hi-level scripts. The principal aim of hi-level scripts is to deal with mandatory packages and prepare the right configuration for low level scripts; see file: 'setup_config.sh'.
-
-There is no priority among low level setup scripts; except for setup_FGPortal.sh that must be the 1st to be executed. However the suggested priority is:
-
-1. `setup_FGPortal.sh` - The main script, it takes care of Tomcat, Liferay and its SDK (optional), Other Development tools (ant, maven).
-2. `setup_JSAGA.sh` - This script configure the environment to host JSAGA, including binariesm, libraries and taking care of the required UnlimitedJCEPolicy accordingly to the current JAVA version
-3. `setup_GridEngine.sh` - This installs the Grid and Cloud Engine component (if requested)
-4. `setup_OCCI.sh` - This is in charge to prepare the GSI environment (VOMS included) and the OCCI CLI interface. It may use the fed cloud installation or a manual setup (not really suggested, but necessary for CentOS7).
-5. `setup_fgService.sh` - For OSes supporting the /etc/init.d service support this installs the service control script
-
-All setup scripts have the same structure. Each installation step is managed by a dedicated bash function and each function can execute only once even running the setup script more times. This protection method is managed by a setup file named: '.fgSetup'.
-The sequence of these function is managed by the scrip body at the bottom of the file in the form of an and-chain:
-
-  `script_function_1 && script_function_2 && ... && script_function_n`
-
-So that if one of the function fails the script terminates giving the opportunity to fix the issue and restart the installation.
 
 ## Ubuntu LTS 14.04 Server 
 
