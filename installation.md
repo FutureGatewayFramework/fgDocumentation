@@ -44,12 +44,9 @@ There is no priority among low level setup scripts; except for setup_FGPortal.sh
 5. `setup_fgService.sh` - For OSes supporting the /etc/init.d service support this installs the service control script
 
 All setup scripts have the same structure. Each installation step is managed by a dedicated bash function and each function can execute only once even running the setup script more times. This protection method is managed by a setup file named: '.fgSetup'.
-The sequence of these function is managed by the scrip body at the bottom of the file in the form of:
+The sequence of these function is managed by the scrip body at the bottom of the file in the form of an and-chain:
 
-  `script_function_1 && \`
-  `script_function_2 && \`
-  `...`
-  `script_function_n`
+  `script_function_1 && script_function_2 && ... && script_function_n`
 
 So that if one of the function fails the script terminates giving the opportunity to fix the issue and restart the installation.
 
