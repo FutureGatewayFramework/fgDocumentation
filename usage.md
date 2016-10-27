@@ -138,6 +138,7 @@ The following commmand removes any reference to the task having id=2
 
 `curl -i -X DELETE http://localhost:8888/v1.0/tasks/2?user=brunor`
 
+Delete action is implemented by the APIServerDaemon which removes every task reference both from DB and file system except for the task table where the task entry will be kept and its status will be changed to 'PURGED'. Special DB cleaning procedures may delete PURGED records, avoiding the case that the last PURGED record is also the last record of the task table sorting it incrementally by task_id.
 
 ## runtime_data support
 
