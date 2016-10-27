@@ -192,6 +192,15 @@ Insert a new data: `http://localhost:8888/v1.0/applications/2`
 
 `curl -i -H "Content-Type: application/json" -X PATCH -d '{"runtime_data": [ { "data_name": "test_data", "data_value": "test_value", "data_desc": "test description value"} ]}' http://localhost:8888/v1.0/tasks/43?user=brunor`
 
+### PATCH on task status
+
+The PATCH call on tasks endpoint has been enriched in order to support a task status change. Executor interfaces may recognize this change forcing the requested status of the task into the distributed infrastructure. In ToscaIDC executor interface, it is posstible to request status `'CANCELLED'` thus will enforce to release the resource associtated to the task to be released by the TOSCA orchestrator.
+To specify a status change use:
+
+`curl -i -H "Content-Type: application/json" -X PATCH -d '{"status": "CANCELLED" }' http://localhost:8888/v1.0/tasks/43?user=brunor`
+
+
+
 # Change a data (notice that desc is not specified anymore
 `curl -i -H "Content-Type: application/json" -X PATCH -d '{"runtime_data": [ { "data_name": "test_data", "data_value": "new_test_value"} ]}' http://localhost:8888/v1.0/tasks/43?user=brunor`
 
@@ -556,7 +565,7 @@ applied: Timestamp when the patch has been applied
 ```
 
 
-## Executor Interfaces
+### Executor Interfaces DB
 Executor interface may have its own specific table or (as in the case of the Grid and Cloud engine) a whole database. The responsability to deal with these tables is in charge of the specific Executor Interface.
 
 * SimpleTosca/ToscaIDC: These Executor interfaces are using respectively the tables: simple_tosca and tosca_idc. Both tables have the same structure:
