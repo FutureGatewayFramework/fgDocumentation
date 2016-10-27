@@ -23,6 +23,7 @@ The finalization, means that the task will be submitted; this happens as soon as
 `curl -i -F "file[]=@hello.txt" -F "file[]=@hello.sh" http://localhost:8888/v1.0/tasks/1/input?user=brunor`
 
 If there are no files to upload, the task will be submitted within the first curl command. Depending on the kind of action taken by the APIServer a different JSON output will be returned.
+Uploaded files can be retrieved using API calls getting its URL from the GET action on tasks endpoint.
 
 ### Using the 2nd tester app 'sayhello.sh' (id:2)
 
