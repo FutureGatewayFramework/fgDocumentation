@@ -73,43 +73,9 @@ Before to execute `fgSetup.sh` it is recommended to open it and verify inside it
 
 ## CentOS 7
 
-To install FutureGateway on this release it is necessary to execute low level scripts, knowing that there are several limitations at the moment below reported:
+Exactly like for Ubuntu, it is possible to install FutureGateway on CentOS7 machines following the same procedure of exchanging the SSH keys, be sure that futuregateway users is a passwordless sudo user during the installation and execute from remote or the same machine:
 
-1. It is not possible to install `setup_OCCI.sh` since till now fedcloud setup scripts are not supporting yet this platform (max CentOS 6). This also means that unless switching off `USEFEDCLOUD` flag in `seutp_config.sh` file (not recommended solution) VOMS support will be not configured.
-2. It is not possible to execute `setup_FGService.sh` since CentOS 7 uses systemctl way to configure services
-
-Before to execute `setup_\*.sh` scripts; please execute the following script that ensures all required packages will be installed.
-
-```
-sudo yum install -y epel-release
-sudo yum clean all
-sudo yum update
-PKGS="wget \
-openssh-clients \
-openssh-server \
-mariadb \
-mariadb-server \
-java-1.7.0-openjdk \
-ruby-devel \
-httpd \
-mod_wsgi \
-python \
-python-pip \
-python-flask \
-python-crypto \
-MySQL-python \
-git \
-openldap \
-openvpn \
-screen \
-jq"
-for pkg in $PKGS; do
-  yum install -y $pkg 
-done
-sudo yum groupinstall -y "Development Tools"
-sudo pip install flask-login
-sudo systemctl enable mariadb
-sudo systemctl start mariadb
+```./fgSetup.sh futuregateway futuregateway <your ssh port> $(cat $HOME/.ssh/id_rsa.pub)
 ```
 
 ## FedCloud Installation
