@@ -143,7 +143,7 @@ The following commmand removes any reference to the task having id=2
 
 The system is able to associate run-time data to a running task
 this feature offers to store any kind of information related to the
-running task in the form of: (key-name, key-value) couple
+running task in the form of: (key-name, key-value) couple. Executor interfaces may use this field to store specific information related to the targeted infrastructure
 
 
 ## Applications
@@ -317,7 +317,7 @@ The ToscaIDC executor interface deprecates the SimpleTosca and it may cover any 
 . `tosca_template`: The yaml file name describing the TOSCA resource
 . `tosca_parameters`: TOSCA parameters (params=\<json file containing yaml input parameters\<)
 
-Inside directory $FGLOCATION/apps there are several sample application making use of different EIs. Any user may use one of these tester applications to generate as a template its own specific application use case.
+Inside directory $FGLOCATION/apps there are several sample application making use of different EIs. Any user may use one of these tester applications to generate as a template its own specific application use case. For ToscaIDC there exists a sample application named: ToscaIDCTest. This application is configured to run as default withting the fgportal_ptv.py script which simulates the TOSCA orchestrator as well as a PTV endpoint. 
 
 ## Advanced operations
 
