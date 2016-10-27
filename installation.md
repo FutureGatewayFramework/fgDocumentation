@@ -133,21 +133,20 @@ Reattach the front-end process anytime with `screen -r fgAPIServer`
 An example of wsgi configuration in site configuration as reported below:
 ```
 <IfModule wsgi_module>
-  WSGIDaemonProcess fgAPIServer  user=futuregateway group=futuregateway  processes=5 threads=10 home=/home/futuregateway
-  WSGIProcessGroup futuregateway
-  WSGIScriptAlias /apis /home/futuregateway/FutureGateway/fgAPIServer/fgapiserver.wsgi
-  WSGIPassAuthorization On
+			WSGIDaemonProcess fgapiserver  user=futuregateway group=futuregateway  processes=5 threads=10 home=/home/futuregateway
+			WSGIProcessGroup futuregateway
+			WSGIScriptAlias /apis /home/futuregateway/FutureGateway/fgapiserver/fgapiserver.wsgi
 
-  <Directory /home/futuregateway/FutureGateway/fgAPIServer>
-    WSGIProcessGroup fgAPIServer
-    WSGIApplicationGroup %{GLOBAL}
-    Order deny,allow
-    Allow from all
-    Options All
-    AllowOverride All
-    Require all granted
-  </Directory>
-</IfModule>
+			<Directory /home/futuregateway/FutureGateway/fgapiserver>
+			  WSGIProcessGroup fgapiserver
+			  WSGIApplicationGroup %{GLOBAL}
+			  Order deny,allow
+			  Allow from all
+			  Options All
+			  AllowOverride All
+			  Require all granted
+			</Directory>
+		</IfModule>
 ```
 
 An example of wsgi configuration is also available under `$FGLOCATION/fgAPIServer.conf`.
@@ -235,5 +234,17 @@ Also the APIServer daemon comes with several configuration settings stored in fi
 * `utdb_name`: Grid and Cloud Engine database database name
 
 
+## Executor Interfaces configuration
+
+Executor interfaces may require to specify several settings
+
+### ToscaIDC
+
+This executor interface needs to configure several settings related to the PTV service.
+The values have to be specified inside the web/WEB-INF/classes/it/infn/ct/ToscaIDC.properties file in particular the following values have to configured:
+
+* `fgapisrv_ptvendpoint`: PTV hostname/address
+* `fgapisrv_ptvuser`: PTV username
+* `fgapisrv_ptvuser`: PTV password
 
 
