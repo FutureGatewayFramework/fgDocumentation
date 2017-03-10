@@ -75,8 +75,8 @@ Before to execute `fgSetup.sh` it is recommended to open it and verify inside it
 
 Exactly like for Ubuntu, it is possible to install FutureGateway on CentOS7 machines following the same procedure of exchanging the SSH keys, be sure that futuregateway users is a passwordless sudo user during the installation and execute from remote or the same machine:
 
-```./fgSetup.sh futuregateway futuregateway <your ssh port> $(cat $HOME/.ssh/id_rsa.pub)
-```
+`./fgSetup.sh futuregateway futuregateway <your ssh port> $(cat $HOME/.ssh/id_rsa.pub)
+`
 
 ## FedCloud Installation
 
@@ -246,5 +246,7 @@ The values have to be specified inside the web/WEB-INF/classes/it/infn/ct/ToscaI
 * `fgapisrv_ptvendpoint`: PTV hostname/address
 * `fgapisrv_ptvuser`: PTV username
 * `fgapisrv_ptvuser`: PTV password
+
+
 
 
