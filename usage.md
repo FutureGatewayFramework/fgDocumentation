@@ -151,23 +151,61 @@ running task in the form of: (key-name, key-value) couple. Executor interfaces m
 
 Below functions related to application management
 
-List all applications
+List all applications:
 
 `curl http://localhost:8888/v1.0/applications/`
 
-List the app having id 2
+List the app having id 2:
 
 `curl http://localhost:8888/v1.0/applications/2`
 
-Creation of an application
+Creation of an application:
 
-`curl -i -H "Content-Type: application/json" -X POST -d '{"infrastructures": [{"description": "Tosca test at 90.147.170.168:32101","parameters": [{"name": "tosca_endpoint","value": "tosca://90.147.170.152:80/orchestrator/deployments"},{"name": "tosca_token","value": "11223344556677889900AABBCCDDEEFF"},{"name": "tosca_template","value": "tosca_template.yaml"},{"name": "tosca_parameters","value": "wait_ms=30000&max_waits=30"}],"enabled": true,"virtual": false,"name": "tosca_Test@BA"}],"parameters": [{"name": "target_executor","value": "SimpleTosca","description": ""},{"name": "jobdesc_executable","value": "tosca_test.sh","description": ""},{"name": "jobdesc_output","value": "stdout.txt","description": ""},{"name": "jobdesc_error","value": "stderr.txt","description": ""}],"enabled": true,"input_files": [{"override": false,"path": "/home/futuregateway/FutureGateway/fgAPIServer/apps/toscaTest","name": "tosca_template.yaml"},{"override": false,"path": "/home/futuregateway/FutureGateway/fgAPIServer/apps/toscaTest","name": "tosca_test.sh"}],"name": "hostname@tosca(1)","description": "hostname tester application on tosca by setup(1)"}' http://localhost:8888/v1.0/applications?user=brunor`
+`curl -i -H "Content-Type: application/json" -X POST -d '{"infrastructures": [1, {"description": "Tosca test at 90.147.170.168:32101","parameters": [{"name": "tosca_endpoint","value": "tosca://90.147.170.152:80/orchestrator/deployments"},{"name": "tosca_token","value": "11223344556677889900AABBCCDDEEFF"},{"name": "tosca_template","value": "tosca_template.yaml"},{"name": "tosca_parameters","value": "wait_ms=30000&max_waits=30"}],"enabled": true,"virtual": false,"name": "tosca_Test@BA"}],"parameters": [{"name": "target_executor","value": "SimpleTosca","description": ""},{"name": "jobdesc_executable","value": "tosca_test.sh","description": ""},{"name": "jobdesc_output","value": "stdout.txt","description": ""},{"name": "jobdesc_error","value": "stderr.txt","description": ""}],"enabled": true,"input_files": [{"override": false,"path": "/home/futuregateway/FutureGateway/fgAPIServer/apps/toscaTest","name": "tosca_template.yaml"},{"override": false,"path": "/home/futuregateway/FutureGateway/fgAPIServer/apps/toscaTest","name": "tosca_test.sh"}],"name": "hostname@tosca(1)","description": "hostname tester application on tosca by setup(1)"}' http://localhost:8888/v1.0/applications?user=brunor`
 
+Infrastructure JSON section, foresees both the possibility to use a generic infrastructure or an application level ifnrastructures. In the first case it  is necessary to specify the `id` of the infrastructure 
 Please be aware that application installation API does not take care of FutureGateway defined uers groups and values. In order to allow users to run this application it is necessary to allow at least one group to run this application, inserting a new record in table fg_group_apps: insert into fg_group_apps values ( \<group_id\>, \<app_id\>, now());.
 
 Inside `$FGLOCATION/fgAPIServer/`apps directory, there are several applications that can be used as template to generate new applications. Once selected the most appropriate application to use, just make a full copy of the application direcotry, provide to the new directory the application name and go inside of it. In the application directory there are two files: setup\_app.sh and stress\_test.sh. Modify the first file to setup properly the new application, use the second file to execute the new application on the system. The second script can be executed only after the setup\_app.sh script has been executed. The setup_app.sh script contains several configuration settings and it can be executed specifying as argument a session token (with no 'Authentication: Bearer' string).
 
 After the applciation is created, it is important to assign this application to a group, so that their members can perform any allowed activity on it (See advanced operations).
+
+Input files
+
+The original API specifications did not have the concept of ‘application level’ files because not foreseen by the original API specification. The old fashioned way to specify default application files was the use of tag ‘input_files’ inside the application installation JSON. The ‘input_files’ can or cannot overridden by the user during task submission accordingly to a given flag. 
+API specification have been modified in order to cover ‘application’ level files, considering a new JSON tag in application installation named ‘files’. Files accepts a list of filenames and then a new API endpoint named `application/input/<app_id>`  with POST method upload these files. During the task submission these files will be included in the task file sandbox automatically and the user cannot modify/access them. In order to do not compromise the backward compatibility the fgAPIServer implements both tags ‘input_files’ and ‘files’. 
+
+Using input_files:
+
+```
+{..., "input_files": [{"override": false,
+                       "path": "<path to file>",
+                       "name": "file name"}, ...}, ...}
+```
+
+The override flag when true avoids to change the file file content during the task submission phase.
+The path have to point to a directory containing the file name specified in the name field.
+This method to specify input files only work with API server filesystem.
+This method is useful to write application installation scripts.
+
+Using files:
+
+```
+{... "files": [ "file1", "file2", ...], ...}' 
+```
+
+Then upload each file content with:
+
+```
+curl  -H "Authorization: Bearer XXX" -F "file[]=@file1 -F "file[]=@file2 ..."  http://localhost:8888/v10/applications/1/input
+```
+
+View uploaded files:
+
+```curl -H "Content-Type: application/json" http://localhost:8888/v1.0/applications/input```
+
+This method is suggested when installing applications using external GUIs because files can be uploaded from anywhere.
+Specified input files cannot be changed by the user during the submission phase; they are threated as 'override == true' of the input_file case.
 
 Delete
 
@@ -261,6 +299,7 @@ This is the way futuregateway manages authorization and authentication as defaul
 
 PTV can be enabled by a configuration flag, in this case session tokens are verified against an existing portal which answers to a given endpoint. A username and password is necessary to contact the portal endpoint and an https connection should be adopted.
 The portal returns a flag telling if the user is allowed or not and optionally further information such the user name and its group in the portal so that this information can be used  to map the portal user with a futuregateway user.
+While processing APIs using tokens related to users not yet registered in the API Server, the new user will be automatically registered using as reference the received subject field.
 
 ## Debug with Liferay using Shibboleth
 Once connected get from the browser shibboleth session and pass it as cookie; for instance:
@@ -272,8 +311,22 @@ Another option is:
  2. In curl commands specify option: -b cookie.txt
 
 ## Infrastructures
-Any installed application on the APIServer may have defined one or more infrastructures where it can execute. The current version of the software does not cover API specification on infrastructure management. At the moment it is only possible to create infrastructures when installing new applications where in the rest call instead to pass the infrastructure array of `\<id\>`s as reported in the specifications, it is necessary to pass an array of defined infrastructures. In this way there are no generic infrastructures to share among different applications but rather infrastructure defined at application level. This solution has been intentionally designed because by previous experiences in most of the cases each application requires its own specific settings. However the infrastructure sharing among application is still possible but only configuring properly the database directly.
-For more information about, please have a look on the 'Advanced operation' section.
+Any installed application on the APIServer may have defined one or more infrastructures where it can execute. 
+The current version of the software can support both generic infrastructures shareable across different applications as well as application level infrastructures.
+
+### Generic infrastructures
+To install a generic ifnrastructure, have been implemented the Infrastructure APIS in accordance to the Futuregateway specifications: http://docs.fgapis.apiary.io/#
+
+#### Infrastructure creation:
+
+```curl -i -H "Content-Type: application/json" -X POST -d '{ "name": “Infra test“, "parameters": [ { "name": "jobservice", "value": "ssh://localhost" }, { "name": "username", "value": "jobtest" }, { "name": "password", "value": "Xvf56jZ751f" } ], "date": "2017-01-10T16:59:10Z", "description": "ansshinfra", "enabled": true, "virtual": false }' http://localhost:8888/v1.0/infrastructures```
+
+#### View infrastructure:
+
+```curl -H "Authorization: Bearer TOKEN" http://localhost:8888/v1.0/infrastructures/2```
+
+### Application level infrastructures
+It is still possible to install infrastructures when installing new applications specifying them in the application creation rest call instead to pass the infrastructure array of `<id>`s as reported in the specifications. In this case the user has to pass an array of defined infrastructures. This solution has been intentionally maintained because by previous experiences in most of the cases each application requires its own specific settings. However the infrastructure sharing among application is still possible using infrastructures API endpoints. It is still possible to define applications directly operating ad database level, for more information about this opportunity, please have a look on the 'Advanced operation' section.
 
 ## Executor Interfaces
 
@@ -601,9 +654,15 @@ usage: updateCode  -h <ip|host>                  # FutureGateway host
                     [-u <file/directory path>]   # Download file/dir from remote
                     [-a]                         # Update all components
                     [-s]                         # Start futuregateway service
+```
 This script copies the specified source package into specified remote host
 using ssh connection, for this reason it is recommended to exchange the
 ssh keys between source and destination hosts
 By default the script stops the futuregateway service leaving it not running
 unless the the option -s is specified
-```
+
+
+	
+
+
+
