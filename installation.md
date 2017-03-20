@@ -4,6 +4,87 @@ FutureGateway can be installed on top of the following environments:
 * Enterprise Linux 6/7
 * Debian (Ubuntu)
 * MacOSX
+
+Thre are currently two possible ways to install the FutureGateway, one is related to the older installation procedure totally made of shell scripts and a new DevOps based procedure based on Ansible playbooks.
+
+# New installation procedure
+
+The new installation procedure maintains as well the script based procedures, but it also provides a DevOps approach offering several Ansible playbooks, each for a different FutureGateway component:
+
+* The database
+* The APIServer front-end (fgAPIServer)
+* The APIServer daemon (APIServerDaemon) and its adaptors
+* Liferay (Not yet available)
+
+The script approach has beeen re-engineered to offer a more elastic structure allowing for instance to separate FutureGateway components into different hosts. The script way has been also maintained to cope those cases where the FutureGateway has to run for unsupported platforms such for instance the example one written for MacOS X.
+
+## Using scripts
+
+The use of the script is easy and made of two steps. First configure the services modifying first the file: `setup_config.sh`
+Then executing the script `setup_futuregateway.sh`
+
+The `setup_config.sh` contains all the configurable environments related to the FutureGateway components:
+
+* The database
+* The APIServer front-end (fgAPIServer)
+* The APIServer daemon (APIServerDaemon) and its adaptors
+* Liferay
+
+The main setup procedure script `setup_futuregateway.sh` calls the proper isntallation script relying on the kind of package manager found on the target host. At the moment the foreseen package managers are:
+
+* brew - for MacOS X platforms
+* apt - For Debian based platforms (Ubuntu 14.04 LTS) (not yet available)
+* yum - For RedHat based platforms (CentOS 7) (not yet available)
+
+The installation process foresees the following steps:
+
+1. Identify the necessary components to install and the whole FutureGateway services topology. In case more hosts are involved in the setup process, please ensure to run the setup from a host able to connect via ssh ach node passwordlessly, properly exchanging SSH keys. Early phases of the setup will try to identify any missing mandatory configuration.
+2. Modify the setup\_config.sh file configuring each FutureGateway service as designed in the previous step. Each FutureGateway component contains its own specific settings inside the setup\_config.sh script. Any FG user specified in the configurion file setup\_config.sh must be already present in its host system with passwordless sudo authorization as well as SSH key exchange with the installation node.
+3. From the installation host, execute the script setup\_futuregateway.sh. The first time the setup procedure will install from Git all selected components, while further executions will try to upgrade the components and update its configurations accordingly with the values placed in the file setup\_config.sh
+
+
+## Using ansible playbooks
+
+Different playbooks and roles are available for each specific FutureGateway compoenent; in particular:
+
+* FutureGateway database
+* APIServer front-end (fgAPIServer)
+* APIServer (APIServerDaemon)
+* Liferay62 *(not available yet)*
+* Liferay7 *(not available yet)*
+* [LiferayIAM](https://galaxy.ansible.com/indigo-dc/ansible-role-liferay-iam/) role is availble on ansible galaxy
+
+### Usage
+Before to install any node; verify that the account used to access the remote machine can connect via ssh as root without prompting for password. This is achieved properly configuring the ssh key file exchange.
+To start the installation, configure first the `hosts` inventory file with the correct hostnames, then configure variable files under `vars/` directory and execute
+```sh
+ansible-playbook -i hosts <component name>
+```
+For instance to setup the database component just execute:
+```sh
+ansible-playbook -i hosts setupdb.yml
+```
+
+### Galaxy roles
+The installation procedure relies on several ansible galaxy roles; you can install them by executing:
+```sh
+# All components
+sudo ansible-galaxy install geerlingguy.git
+
+# Database
+sudo ansible-galaxy install geerlingguy.mysql
+
+# fgAPIServer
+sudo ansible-galaxy install geerlingguy.apache
+sudo ansible-galaxy install bobbyrenwick.pip
+
+# LiferayIAM
+ansible-galaxy install indigo-dc.ansible-role-liferay-iam
+```
+
+
+# Old fashioned installation
+
 The installation procedure is managed by a set of bash scripts operating at different levels. Low level scripts are in charge to install FutureGateway components targeting the different operating system. High level scripts manage low level scripts to install the system for a specific operating system.
 Installation process may differ in case there exists a specific OS/Architecture hi-level isntallation script.
 
