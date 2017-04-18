@@ -214,7 +214,7 @@ Reattach the front-end process anytime with `screen -r fgAPIServer`
 An example of wsgi configuration in site configuration as reported below:
 ```
 <IfModule wsgi_module>
-			WSGIDaemonProcess fgapiserver  user=futuregateway group=futuregateway  processes=5 threads=10 home=/home/futuregateway
+			WSGIDaemonProcess fgapiserver  user=futuregateway group=futuregateway  processes=5 threads=10 home=/home/futuregateway/fgAPIServer
 			WSGIProcessGroup futuregateway
 			WSGIScriptAlias /apis /home/futuregateway/FutureGateway/fgapiserver/fgapiserver.wsgi
 
