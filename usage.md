@@ -340,6 +340,7 @@ The GridEngine executor interface target any distributed infrastructure that the
 . `jobservice`: ssh://\<ssh_host\>:\<ssh_port\>
 . `username`: the ssh username
 . `password`: the ssh password (clear text)
+Omitting the `password` field or placing an empty string the GridEngine will attempt to establish the SSH connection using the .ssh private key file contained in the tomcat server home dir running the APIServerDaemon web application.
 
 * EMI/gLite Configuration
 . `jobservice`: wms endpoint
