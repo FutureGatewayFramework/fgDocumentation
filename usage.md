@@ -211,6 +211,16 @@ Delete
 
 `curl -i -H "Content-Type: application/json" -X DELETE`
 
+Change an application:
+
+```curl -H "Content-Type: application/json" -H "Authorization: Bearer TKN"  -X PUT -d '{"files": ["tosca_template.yaml", "tosca_test.sh"],"name": "hostname@toscaIDC","parameters": [{"name": "target_executor","value": "ToscaIDC","description": ""}, {"name": "jobdesc_executable","value": "tosca_test.sh","description": "unused"},{"name": "jobdesc_output", "value": "stdout.txt","description": "unused"},{"name": "jobdesc_error", "value": "stderr.txt", "description": "unused"}], "outcome": "JOB","enabled": true,"id": "14","infrastructures": [4],"description": "hostname tester application on toscaIDC"}' http://localhost:8888/v1.0/applications/14```
+
+Infrastructures can be specified using registered Ids or using an explicit json declaration like in infrastructure creation. All specified infrastructure ids will be checked against the existing ids. New ids will be associated to the application while ids no more present in the passed json array will be removed. Specifiying explicitly an infrastrcucture description; a new infrastructure will be created and registered with the application; for instance:
+
+```curl -H "Content-Type: application/json" -H "Authorization: Bearer TKN"  -X PUT -d '{"files": ["tosca_template.yaml", "tosca_test.sh"],"name": "hostname@toscaIDC","parameters": [{"name": "target_executor","value": "ToscaIDC","description": ""}, {"name": "jobdesc_executable","value": "tosca_test.sh","description": "unused"},{"name": "jobdesc_output", "value": "stdout.txt","description": "unused"},{"name": "jobdesc_error", "value": "stderr.txt", "description": "unused"}], "outcome": "JOB","enabled": true,"id": "14","infrastructures": [4, { "name": "New infra test", "parameters": [ { "name": "jobservice", "value": "ssh://localhost", "description": "local SSH host" }, { "name": "username", "value": "jobtest" }], "description": "New ssh infra", "enabled": true, "virtual": false }],"description": "hostname tester application on toscaIDC"}' http://localhost:8888/v1.0/applications/14``` 
+
+With the explicit infrastructure description in the application change, it is possible to specify application specific values to already existing infrastructures.
+
 ### REST APIs can get/set runtime_data 
 
 This is included in the json response after a GET: tasks/<task_id> inside 'runtime_data' json section specifying an input json in the form:
@@ -328,6 +338,11 @@ To install a generic ifnrastructure, have been implemented the Infrastructure AP
 ### Application level infrastructures
 It is still possible to install infrastructures when installing new applications specifying them in the application creation rest call instead to pass the infrastructure array of `<id>`s as reported in the specifications. In this case the user has to pass an array of defined infrastructures. This solution has been intentionally maintained because by previous experiences in most of the cases each application requires its own specific settings. However the infrastructure sharing among application is still possible using infrastructures API endpoints. It is still possible to define applications directly operating ad database level, for more information about this opportunity, please have a look on the 'Advanced operation' section.
 
+#### Change infrastructure:
+
+```curl -H "Content-Type: application/json" -H "Authorization: Bearer TKN"  -X PUT -d '{"name": "Infra test (changed)", "enabled": false, "id": 6, "virtual": true, "description": "ansshifnra (changed)", "parameters": [{"name": "jobservice", "value": "ssh://fgtest", "description": "fgtest ssh hots"} ] }' http://localhost:8888/v1.0/infrastructures/6```
+
+
 ## Executor Interfaces
 
 Executor interfaces (EI)s are the way the APIServer uses to reach any kind of distributed computing resource through the use of any possible middleware component. EIs may deal with very flexible system like JSAGA and its adaptors like in GridEngine and SimpleTosca executor interfaces. In other cases EIs may use APIs or even CLI commands to manage the distributed infrastructure like in the case of the ToscaIDC which deals directly with TOSCA orchestrator REST API calls. Below sections describe how to configure these interfaces, in particular how to setup properly `infrastructure_parameters` values while describing a new APIServer application.
@@ -419,8 +434,8 @@ pdesc:    Parameter description
 
 ### Infrastructure tables
 
-* `infrastructure`: This table should have a different name like `application_infrastructure`, since the primary key of that table consists of the couple (application id, infrastructure id).
-This table contains just infrastructure generic information and flags like enabling or if the infrastructure is a virtual entity (something to be instantiated yet).
+* `infrastructure`: This table should have a different name like `application_infrastructure`, since the primary key of this table consists of the couple (application id, infrastructure id). The infrormation about infrastructure is kept at application level in order to facilitate infrastructure customization for a specific application.
+This table contains just infrastructure generic information and several flags like enabling the infrastructure or specify if the infrastructure is a virtual entity (something to be instantiated yet).
 ```
 id          Infrastructure record identifier
 app_id      Application record identifier where this infrastructure belongs

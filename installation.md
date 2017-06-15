@@ -16,11 +16,13 @@ The new installation procedure maintains as well the script based procedures, bu
 * The APIServer daemon (APIServerDaemon) and its adaptors
 * Liferay (Not yet available)
 
-The script approach has beeen re-engineered to offer a more elastic structure allowing for instance to separate FutureGateway components into different hosts. The script way has been also maintained to cope those cases where the FutureGateway has to run for unsupported platforms such for instance the example one written for MacOS X.
+The script approach currently supports the MacOS X only and it has beeen re-engineered to offer a more elastic structure allowing for instance to separate FutureGateway components into different hosts. The script way has been also maintained to cope all those cases where the FutureGateway has to run for unsupported platforms such as MacOS X.
+
+The new installation procedure comes inside the repository named *fgSetup*
 
 ## Using scripts
 
-The use of the script is easy and made of two steps. First configure the services modifying first the file: `setup_config.sh`
+The use of the script installation is easy and made of two steps. First configure the services modifying first the file: `setup_config.sh`
 Then executing the script `setup_futuregateway.sh`
 
 The `setup_config.sh` contains all the configurable environments related to the FutureGateway components:
@@ -42,6 +44,7 @@ The installation process foresees the following steps:
 2. Modify the setup\_config.sh file configuring each FutureGateway service as designed in the previous step. Each FutureGateway component contains its own specific settings inside the setup\_config.sh script. Any FG user specified in the configurion file setup\_config.sh must be already present in its host system with passwordless sudo authorization as well as SSH key exchange with the installation node.
 3. From the installation host, execute the script setup\_futuregateway.sh. The first time the setup procedure will install from Git all selected components, while further executions will try to upgrade the components and update its configurations accordingly with the values placed in the file setup\_config.sh
 
+The script based installation procedure comes inside the repository named *PortalSetup* and it incudes cloud-init contextualization files to install FG on top of the EGI FedCloud.
 
 ## Using ansible playbooks
 
