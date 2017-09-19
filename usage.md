@@ -14,7 +14,7 @@ Below example shoes how to create a new task for the baseline example applicatio
 
 answer: `{"status": "WAITING", "application": 1, "date": "2015-10-08 16:22:51", "description": "helloworld@localhost test run", "output_files": ["hello.out", "hello.err"], "_links": [{"href": "/v1.0/tasks/1", "rel": "self"}, {"href": "/v1.0/tasks/1/input", "rel": "input"}], "user": "brunor", "input_files": ["hello.txt", "hello.sh"], "id": 1, "arguments": ["arg1", "arg2", "arg3"]}`
 
-Please notice the use of filter `user=...`. Any APIServer REST call can be performed on behalf of a given user. Users maybe or not the one registered on the APIServer, however the user executing the command must have a special role in order to behave as a different user.
+Please notice the use of filter `user=...`. Any APIServer REST call can be performed on behalf of a given user. Users maybe or not the one registered on the APIServer, however the user executing the command must have the special role `user_impersonate` in order to behave as a different user.
 
 ### Upload files and finalize task creation
 
@@ -23,7 +23,61 @@ The finalization, means that the task will be submitted; this happens as soon as
 `curl -i -F "file[]=@hello.txt" -F "file[]=@hello.sh" http://localhost:8888/v1.0/tasks/1/input?user=brunor`
 
 If there are no files to upload, the task will be submitted within the first curl command. Depending on the kind of action taken by the APIServer a different JSON output will be returned.
+
+`$ curl -H "Authorization: Bearer TEST_TOKEN" -F "file[]=@input.txt" http://localhost:8888/v1.0/tasks/31/input
+{
+    "files": [
+        "input.txt"
+    ], 
+    "message": "uploaded", 
+    "task": "31", 
+    "_links": [
+        {
+            "href": "/v1.0/tasks/31", 
+            "rel": "task"
+        }
+    ], 
+    "gestatus": "triggered"
+}`
+
+In this case the task is ready for the daemon processing.
+
+`curl -H "Authorization: Bearer TEST_TOKEN" -F "file[]=@file.txt" http://localhost:8888/v1.0/tasks/32/input
+{
+    "files": [
+        "file.txt"
+    ], 
+    "message": "uploaded", 
+    "task": "32", 
+    "gestatus": "waiting"
+}`
+
+In this case the task is still waiting for necessary input files.
+
 Uploaded files can be retrieved using API calls getting its URL from the GET action on tasks endpoint.
+
+`$ curl -H "Authorization: Bearer TEST_TOKEN" http://localhost:8888/v1.0/tasks/31
+{
+    "status": "SUBMIT", 
+    "description": "tester application run", 
+    "creation": "2017-09-19T08:04:22Z", 
+    "iosandbox": "/tmp/258e35ac-9d11-11e7-a33d-fa163e876b0e", 
+    "user": "00000000-0000-0000-0000-000000000000", 
+    ...
+    "input_files": [
+        {
+            "status": "READY", 
+            "url": "file?path=%2Ftmp%2F258e35ac-9d11-11e7-a33d-fa163e876b0e&name=input.txt", 
+            "name": "input.txt"
+        }
+    ], 
+    "last_change": "2017-09-19T08:08:00Z"
+}
+$ curl -H "Authorization: Bearer TEST_TOKEN" "http://localhost:8888/v1.0/file?path=%2Ftmp%2F258e35ac-9d11-11e7-a33d-fa163e876b0e&name=input.txt"
+###
+### This is the input file
+###
+`
 
 ### Using the 2nd tester app 'sayhello.sh' (id:2)
 
