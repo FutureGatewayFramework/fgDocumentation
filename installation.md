@@ -331,6 +331,9 @@ The values have to be specified inside the web/WEB-INF/classes/it/infn/ct/ToscaI
 * `fgapisrv_ptvuser`: PTV username
 * `fgapisrv_ptvuser`: PTV password
 
-
+* `fgapisrv_frontend`: API server front-end entry point
+* `fgapisrv_ptvtokensrv`: PTV service name to get a token
+* `fgapisrv_ptvuser`: PTV basic authentication username
+* `fgapisrv_ptvpass`: PTV basic authentication password
 
 
