@@ -5,7 +5,7 @@ FutureGateway can be installed on top of the following environments:
 * Debian (Ubuntu)
 * MacOSX
 
-Thre are currently two possible ways to install the FutureGateway, one is related to the older installation procedure totally made of shell scripts and a new DevOps based procedure based on Ansible playbooks.
+Thre are currently three possible ways to install the FutureGateway, one is related to the older installation procedure totally made of shell scripts, a new DevOps based procedure based on Ansible playbooks and finally using Docker Containers
 
 # New installation procedure
 
@@ -16,9 +16,9 @@ The new installation procedure maintains as well the script based procedures, bu
 * The APIServer daemon (APIServerDaemon) and its adaptors
 * Liferay (Not yet available)
 
-The script approach currently supports the MacOS X only and it has beeen re-engineered to offer a more elastic structure allowing for instance to separate FutureGateway components into different hosts. The script way has been also maintained to cope all those cases where the FutureGateway has to run for unsupported platforms such as MacOS X.
+The script approach currently supports the MacOS X only and it has beeen re-engineered to offer a more elastic structure allowing for instance to separate FutureGateway components into different hosts. The script way has been also maintained to cope all those cases where the FutureGateway has to run for unsupported platforms such as MacOS X. For instance the MacOS X code can be adapted to support other systems.
 
-The new installation procedure comes inside the repository named *fgSetup*
+The new installation procedure comes inside the repository named [fgSetup](https://github.com/FutureGatewayFramework/fgSetup)
 
 ## Using scripts
 
@@ -85,9 +85,73 @@ sudo ansible-galaxy install bobbyrenwick.pip
 ansible-galaxy install indigo-dc.ansible-role-liferay-iam
 ```
 
+# Docker Containers
+
+Docker Containers are totally matching the FutureGateway philosophy to provide the most possible flexible and customisable solution for the final user. Also the Docker based installation foresees a different container for each FutureGateway component and all necessary files to setup the system are available on GitHub under [fgSetup/docker](https://github.com/FutureGatewayFramework/fgSetup/docker) directory.
+FutureGateway at the moment cannot be configured on the fly using only environment variables. For this reason in order to setup any of its components a special GNU Make receipt has to be called.
+The following chapters are reporting the correct procedure to install each FG component and they have to be executed in the same order as they appear in the instructions.
+The common procedure for all FG components is to extract the fgSeutp repository preferably cloning it from its [master branch](https://github.com/FutureGatewayFramework/fgSetup.git), configure the Dockefile and execute several Makefile receipts. For this reason GNU make is required at the moment to install FG using Docker Containers.
+
+
+## fgdb
+Execute the following commands to setup the FutureGateway database.
+Before to execute the `make image` step, please ensure that environment variables inside the `Dockerfile` are matching your environment.
+The use of default values should be enough to ensure a stable installation.
+
+```sh
+cd $HOME/FutureGatewayFramework/fgSetup/docker/fgdb
+sudo make image
+sudo make run
+```
+
+## fgAPIServer
+As for the database components the fgAPIServer can be installed with the following steps:
+
+```sh
+cd $HOME/FutureGatewayFramework/fgSetup/docker/fgapiserver
+sudo make image
+sudo make run
+```
+
+The latter `make run` command can be replaced with `make testrun` in the case it is required to apply changes to the python code providing the REST APIs. Using this Makefile receipt, it is important to check environment variables specified at the top of the Makefile itself. These variables will be used to create on the fly the `fgapiserver.conf` file.
+
+## APIServerDaemon
+As for the previous component the APIServerDaemon component can be installed with the following steps:
+
+```sh
+cd $HOME/FutureGatewayFramework/fgSetup/docker/apiserverdaemon
+sudo make image
+sudo make run
+```
+
+## SSH node
+This is a node that could be installed to perform a basic tests on FG exploiting the GridEngine ExecutorInterface using the JSAGA ssh adaptor.
+The following commans create and configure this node with the APIServerDaemon.
+
+```sh
+cd $HOME/FutureGatewayFramework/fgSetup/docker/sshnode
+sudo make image
+sudo make run
+sudo make apiserverdaemon
+```
+The latter Makefile receipt allows SSH connections from APIServerDaemon using login/password to the SSH node.
+
+## Liferay
+Currently under development/testing
+
+##	fghttpd
+This is not properly a FG component at the moment, but it could be an important container to properly implement a production quality FG system. The fghttpd provides an Apache web server where configure the ReverseProxy (Gateway Server).
+This solution ensures security and scalability.
+
+```sh
+cd $HOME/FutureGatewayFramework/fgSetup/docker/fghttpd
+sudo make image
+sudo make run
+```
 
 # Old fashioned installation
 
+The old fashioned installation has not been deprecated because it can still be used to setup small test environments or in the cases that the whole FG can run in a single host machine.
 The installation procedure is managed by a set of bash scripts operating at different levels. Low level scripts are in charge to install FutureGateway components targeting the different operating system. High level scripts manage low level scripts to install the system for a specific operating system.
 Installation process may differ in case there exists a specific OS/Architecture hi-level isntallation script.
 
