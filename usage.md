@@ -170,7 +170,8 @@ JSON files above are located inside the task informative directory; see as_queue
 
  This produced GridEngine understable JSON (application: 10000, means the APIServer app registered in UsersTracking database `GridOperations` table)
 
-``{
+```
+{
  'infrastructure': {
     'resourceManagers': 'ssh://90.147.74.95'},
  'commonName': 'helloworld@csgfsdk test run',
@@ -183,8 +184,10 @@ JSON files above are located inside the task informative directory; see as_queue
  'credentials': {
     'username': 'jobtest',
     'password': 'Xvf56jZ751f'},
- 'identifier': u'task_id: 1'
- }```
+ 'identifier': 'task_id: 1'
+ }
+```
+
 
 ### Delete/Abort a task and all its references
 
@@ -361,7 +364,7 @@ This is the way futuregateway manages authorization and authentication as defaul
 	```
 2.a) It is possible to obtain a session tokens direcrtly from /auth call providing credentials as parameters (operation suggested only if the front is accessible via https.
 
-## Portal Token Validation 
+## Portal Token Validation (PTV)
 
 PTV can be enabled by a configuration flag, in this case session tokens are verified against an existing portal which answers to a given endpoint. A username and password is necessary to contact the portal endpoint and an https connection should be adopted.
 The portal returns a flag telling if the user is allowed or not and optionally further information such the user name and its group in the portal so that this information can be used  to map the portal user with a futuregateway user.
@@ -450,13 +453,173 @@ The ToscaIDC executor interface deprecates the SimpleTosca and it may cover any 
 * Configuration
 . `tosca_endpoint`: The TOSCA endpoint
 . `tosca_template`: The yaml file name describing the TOSCA resource
-. `tosca_parameters`: TOSCA parameters (params=\<json file containing yaml input parameters\<)
+. `tosca_parameters`: TOSCA parameters (params=`<json file containing yaml input parameters>`)
 
 Inside directory $FGLOCATION/apps there are several sample application making use of different EIs. Any user may use one of these tester applications to generate as a template its own specific application use case. For ToscaIDC there exists a sample application named: ToscaIDCTest. This application is configured to run as default withting the fgportal_ptv.py script which simulates the TOSCA orchestrator as well as a PTV endpoint. 
 
-## Advanced operations
 
-The APIServer manages users, groups and roles however API specs do not take in account these entities. For instance when a new application is installed it is necessary to enable a group to grant execution rights to the new application. All these operations not foreseen by the API specifications must be performed managing directly the database. For this reason it is important for developers and administrators to know the APIServer database schema.
+## Users Groups and Roles
+Starting from database schema 0.0.12b, the FG has been enriched with a new set of API calls able to manage: Users, Groups and Roles (UGR). The use of thes API calls have to be intended partially to deprecate the use of the PTV service which continues to be part of the FG functionalities.
+Users, Groups and Roles have been designed before the introduction of the UGR APIs and the management of these entities have been done updating directly the FG database.
+The FG foresees the following structure:
+
+* **Users**, Each user/entity calling FG APIs must have an user associated. Any user may have associtated one or more Groups.
+* **Groups**, Are used to associate one or more Appliations and define also a set of Roles allowed for that GRoup.
+* **Roles**, Are a set of strings that when present allow the corresponding API activity.
+
+Below chapters are describing the UGR APIs separating them by: Users, Groups and Roles.
+
+### Users
+It is not possible to use FG APIs without specifying an user, unless disabling authentication and also in such a case, the APIs are forced to use a given user (see variables `fgapisrv_notoken` and `fgapisrv_notokenusr` of the `fgapiserver.conf` configuration file in [fgAPIServer](https://github.com/FutureGatewayFramework/fgAPIServer)). Baseline installation has defined several users, among them the `futuregateway` user having all privileges defined as default.
+
+#### Login (Access tokens)
+Before using FG APIs, the user has to `login` using credentials in the form of `<user_name>`/`<password>`. A special API endpoint `auth/` has to be used to perform this opreation before using any further FG APIs. Once logged successfully, the `auth/` endpoint provides an **access token**, this value will be used to execute FG APIs until its expiration.
+
+```
+curl -H "Content-type: application/json" -H "Authorization: <user_name>/<Base64_encoded_password>" -X POST localhost/v1.0/auth
+{
+    "token": "4a998b44-3139-11e9-a2f8-0242ac150003", 
+    "_links": [
+        {
+            "href": "/auth", 
+            "rel": "self"
+        }
+    ]
+}
+```
+
+When successful, this API call returns an access Token, an alphanumerical string that will be used by next API calls in the form:
+
+```
+curl -H "Content-type: application/json" -H "Authorization: <access_token>" <FG_API_ENDPOINT>
+```
+
+Auth API call may be called with GET method providing an access token, to retrieve token information as:
+
+```
+curl -H "Content-type: application/json" -H "Authorization: 4a998b44-3139-11e9-a2f8-0242ac150003" localhost/v1.0/auth
+{
+    "token_info": {
+        "user_id": 1, 
+        "creation": "2019-02-15T16:15:26Z", 
+        "expiry": 86400, 
+        "valid": true, 
+        "user_name": "futuregateway", 
+        "lasting": 84689
+    }, 
+    "token": "4a998b44-3139-11e9-a2f8-0242ac150003", 
+    "_links": [
+        {
+            "href": "/auth", 
+            "rel": "self"
+        }
+    ]
+}
+```
+
+#### Create users
+There are two kind of insertion available, the first method allows the insertion of a single user while the second insert a given array of users.
+
+1. Single user
+
+```
+curl -H "Content-type: application/json"\
+     -H "Authorization: 4a998b44-3139-11e9-a2f8-0242ac150003"\
+     -X POST\
+     -d '{ "first_name": "FirstName",
+           "last_name": "LastName",
+           "mail": "NewUserName@UserDomain",
+           "institute": "UserInstitution" }'\
+    localhost/v1.0/users/NewUserName
+```
+
+2. Array of users
+
+```
+curl -H "Content-type: application/json"\
+     -H "Authorization: 4a998b44-3139-11e9-a2f8-0242ac150003"\
+     -X POST\
+     -d '{ "users": [
+             { "name": "NewUserName1",
+               "first_name": "FirstName1",
+               "last_name": "LastName1",
+               "mail": "NewUserName@UserDomain1",
+               "institute": "UserInstitution1" },
+             { "name": "NewUserName2",
+               "first_name": "FirstName2",
+               "last_name": "LastName2",
+               "mail": "NewUserName@UserDomain2",
+               "institute": "UserInstitution2" }]}'\
+    localhost/v1.0/users
+
+```
+
+#### View users
+As for the insertion, there are two possibilities, list all users or just a single user.
+
+1. All users
+```
+curl -H "Content-type: application/json" -H "Authorization: 4a998b44-3139-11e9-a2f8-0242ac150003" -X GET localhost/v1.0/users
+{
+    "users": [
+        {
+            "first_name": "FutureGateway", 
+            "last_name": "FutureGateway", 
+            "name": "futuregateway", 
+            "institute": "INFN", 
+            "mail": "sgw-admin@lists.indigo-datacloud.eu", 
+            "creation": "2019-02-07T08:00:03Z", 
+            "id": 1, 
+            "modified": "2019-02-07T08:00:03Z"
+        }, 
+        ... 
+        {
+            "first_name": "FirstName2", 
+            "last_name": "LastName2", 
+            "name": "NewUserName2", 
+            "institute": "UserInstitution2", 
+            "mail": "NewUserName@UserDomain2", 
+            "creation": "2019-02-15T17:00:23Z", 
+            "id": 6, 
+            "modified": "2019-02-15T17:00:23Z"
+        }
+    ]
+}
+```
+
+2. Single user
+```
+curl -H "Content-type: application/json" -H "Authorization: 4a998b44-3139-11e9-a2f8-0242ac150003" -X GET localhost/v1.0/users/futuregateway
+{
+    "first_name": "FutureGateway", 
+    "last_name": "FutureGateway", 
+    "name": "futuregateway", 
+    "institute": "INFN", 
+    "mail": "sgw-admin@lists.indigo-datacloud.eu", 
+    "creation": "2019-02-07T08:00:03Z", 
+    "id": 1, 
+    "modified": "2019-02-07T08:00:03Z"
+}
+```
+
+### Groups
+
+#### View Groups
+
+#### Create Groups
+
+#### Associate applications to groups
+
+#### Associate roles to groups
+
+### Roles
+
+#### View roles
+
+
+
+## Advanced operations
+Below are described several database tables to better understand the internal mechanism used by the FutureGateway.
 
 ### Application tables
 
@@ -705,34 +868,6 @@ last_change:  Record change timestamp
 ```
 
 * UsersTrackingDatabase: The UsersTrackingDatabase is used by the Grid and Cloud Engine component to keep track of each activity performed by this system. This database has been developed to fullfil the EGI Traceability policies defined for scientific gateways. The Grid and Cloud Engine was the core component of the Catania Science Gateway Framework CSGF from where the FutureGateway takes its orings. The GridEngine executor interface deals with the Grid and Cloud Engine component in order to target the following kind of distributed infrastructures: SSH, EMI/gLite, rOCCI. All of them are reached instructing properly the JSAGA component through the use of the corresponding JSAGA adaptor. This involves that applications targeting the GridEngine executor interface may run on all of those infrastructure just filling up the `infrastructure` and `infrastructure_parameters_tables`. This kind  of configuration is visibile in the baseline setup with the `sayhello` application. When submitting a task linked to many infrastructures, only one of them will be selected using a random strategy. This behavior may be changed in the future with more sophisticated algorithms depending for instance on the loud charge of each targeted infrastructures.
-
-## fgTools
-
-APIServer software suite offers the fgTools repository where can be located any utility and helper tool. At the moment only two utilities are available:
-
-* `pushProxy`: This is an utility developed at the very ealry developments on TOSCA orchestrator. The utility has to be configured inside a cron job in order to timely send to a given endpoint a robotProxy extracted from the eTokenServer host.
-
-* `updateCode`: This utility helps FG developers to update source packages remotely. It allows to send local modified APIServerDaemon sources, recompiling and installing them on the remote service. It provides the same capability for other sources like adaptors and the front-end. It also provide options to send and receive files from/to the remote FG machine.
-Below the help message:
-```
-usage: updateCode  -h <ip|host>                  # FutureGateway host
-                    [-p <ssh port>] (default 22) # FutureGateway ssh port
-                    [-c <fgAPIServer             # code: APIServer front-end
-                        |APIServerDaemon         # code: APIServerDaemon
-                        |jsaga-adaptor-rocci>    # code: rOCCI adaptor
-                        |jsaga-adaptor-tosca>]   # code: tosca adaptor
-                    [ -f <file/directory path>   # Upload Local file/dir 
-                    [-t <destination dir> ]]     # \$FGLOCATION/<file/dir>
-                    [-u <file/directory path>]   # Download file/dir from remote
-                    [-a]                         # Update all components
-                    [-s]                         # Start futuregateway service
-```
-This script copies the specified source package into specified remote host
-using ssh connection, for this reason it is recommended to exchange the
-ssh keys between source and destination hosts
-By default the script stops the futuregateway service leaving it not running
-unless the the option -s is specified
-
 
 	
 
