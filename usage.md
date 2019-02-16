@@ -11,8 +11,31 @@ Before submit any task, at least an application should be installed on the APISe
 Below example shoes how to create a new task for the baseline example application having id 1 `helloworld@localhost`. THis application just generate an output file and does not use any input file.
 
 ```
-curl -i -H "Content-Type: application/json" -X POST -d '{"application":"1","description":"helloworld@localhost test run","arguments": ["arg1","arg2","arg3"]}' http://localhost:8888/v1.0/tasks?user=brunor
-{"status": "WAITING", "application": 1, "date": "2015-10-08 16:22:51", "description": "helloworld@localhost test run", "output_files": ["hello.out", "hello.err"], "_links": [{"href": "/v1.0/tasks/1", "rel": "self"}, {"href": "/v1.0/tasks/1/input", "rel": "input"}], "user": "brunor", "input_files": ["hello.txt", "hello.sh"], "id": 1, "arguments": ["arg1", "arg2", "arg3"]}
+curl -s\
+     -H "Content-Type: application/json"\
+     -X POST\
+     -d '{"application":"1",\
+          "description":"helloworld@localhost test run",\
+          "arguments": ["arg1","arg2","arg3"]}'\
+     http://localhost:8888/v1.0/tasks?user=brunor
+{
+  "status": "WAITING",
+  "application": 1,
+  "date": "2015-10-08 16:22:51",
+  "description": "helloworld@localhost test run",
+  "output_files": ["hello.out", "hello.err"],
+  "_links": [{
+    "href": "/v1.0/tasks/1",
+    "rel": "self"
+  }, {
+    "href": "/v1.0/tasks/1/input",
+    "rel": "input"
+  }],
+  "user": "brunor",
+  "input_files": ["hello.txt", "hello.sh"],
+  "id": 1,
+  "arguments": ["arg1", "arg2", "arg3"]
+}
 ```
 
 Please notice the use of filter `user=...`. Any APIServer REST call can be performed on behalf of a given user. Users maybe or not the one registered on the APIServer, however the user executing the command must have the special role `user_impersonate` in order to behave as a different user.
@@ -22,7 +45,10 @@ Please notice the use of filter `user=...`. Any APIServer REST call can be perfo
 The finalization, means that the task will be submitted; this happens as soon as all input_sandbox files have been sent
 
 ```
-curl -i -F "file[]=@hello.txt" -F "file[]=@hello.sh" http://localhost:8888/v1.0/tasks/1/input?user=brunor
+curl -s\
+     -F "file[]=@hello.txt"\
+     -F "file[]=@hello.sh"\
+     http://localhost:8888/v1.0/tasks/1/input?user=brunor
 ```
 
 If there are no files to upload, the task will be submitted within the first curl command. Depending on the kind of action taken by the APIServer a different JSON output will be returned.
@@ -96,19 +122,38 @@ curl -H "Authorization: Bearer TEST_TOKEN" "http://localhost:8888/v1.0/file?path
 
 This second example uses another sample application pre-configured after the installation. This application behaves like `helloworld@localhost` it has id: 2 and makes use of input and output files.
  
- 1. Define application execution:
+ * Define application execution:
+
  ```
- curl -i -H "Content-Type: application/json" -X POST -d '{"application":"2","description":"sayhello@csgfsdk test run", "arguments": ["\"I am saying hello!\""],  "output_files": [{"name":"sayhello.data"}], "input_files": [{"name":"sayhello.sh"},{"name":"sayhello.txt"}]}' http://localhost:8888/v1.0/tasks?user=brunor
- 1 curl -i -H "Content-Type: application/json" -X POST -d '{"appliDELETEcation":"2","description":"sayhello@csgfsdk test run", "arguments": ["\"I am saying hello!\""],  "output_files": [{"name":"sayhello.data"}], "input_files": [{"name":"sayhello.sh"},{"name":"sayhello.txt"}]}' http://localhost:8888/v1.0/tasks?user=brunor
+ curl -s\
+      -H "Content-Type: application/json"\
+      -X POST\
+      -d '{
+            "application": "2",
+            "description": "sayhello@csgfsdk test run",
+            "arguments": ["\"I am saying hello!\""],
+            "output_files": [{
+              "name": "sayhello.data"
+            }],
+            "input_files": [{
+              "name": "sayhello.sh"
+            }, {
+              "name": "sayhello.txt"
+            }]}'\
+      http://localhost:8888/v1.0/tasks?user=brunor
  ```
- 2. Upload files:
+ * Upload files:
+
 ```
-curl -i -F "file[]=@sayhello.txt" -F "file[]=@sayhello.sh" http://localhost:8888/v1.0/tasks/14/input?user=brunor
+curl -s\
+     -F "file[]=@sayhello.txt"\
+     -F "file[]=@sayhello.sh"\
+     http://localhost:8888/v1.0/tasks/14/input?user=brunor
 ```
 
-### The Grid and Cloud Engine (GridEngine)
+### The Grid and Cloud Engine ([GridEngine][GRIDENGINE])
 
-In the case of the GridEngine executor interface, the original submission description JSON is  translated in a new format recognized by the GridEngine.
+In the case of the [GridEngine][GRIDENGINE] executor interface, the original submission description JSON is  translated in a new format recognized by the GridEngine.
 
 Follows a JSON understandable by Grid and Cloud Engine:
 
@@ -139,6 +184,7 @@ Follows a JSON understandable by Grid and Cloud Engine:
 }
 ```
 Translated to:
+
 ```
 {
    "commonName": "test",
@@ -175,23 +221,31 @@ Translated to:
 }
 ```
 
-JSON files above are located inside the task informative directory; see as_queue table field task_info in APIServer database.
+JSON files above are located inside the task informative directory (see fgAPIServer `iosandbox`); which path is available in as_queue table in the task_info column in the APIServer database.
 
 #### Running test with GridEngine EI for accessing SSH 
 
 1) Insert the task request
 
 ```
-curl -i -H "Content-Type: application/json" -X POST -d '{"application":"1","description":"helloworld@csgfsdk test run", "output_files": [ "stdout.txt","stderr.txt" ]}' http://localhost:8888/v1.0/tasks?user=brunor
+curl -s\
+     -H "Content-Type: application/json"\
+     -X POST\
+     -d '{
+          "application": "1",
+          "description": "helloworld@csgfsdk test run",
+          "output_files": ["stdout.txt", "stderr.txt"]
+        }'\
+     http://localhost:8888/v1.0/tasks?user=brunor
 ```
 
 2) Finalize task sending POST call (no uploads)
 
 ```
-curl -i -X POST http://localhost:8888/v1.0/tasks/1/input?user=brunor
+curl -s -X POST http://localhost:8888/v1.0/tasks/1/input?user=brunor
 ```
 
- This produced GridEngine understable JSON (application: 10000, means the APIServer app registered in UsersTracking database `GridOperations` table)
+ This produced [GridEngine][GRIDENGINE] understable JSON (application: 10000, means the APIServer app registered in UsersTracking database `GridOperations` table)
 
 ```
 {
@@ -248,7 +302,60 @@ curl http://localhost:8888/v1.0/applications/2
 Creation of an application:
 
 ```
-curl -i -H "Content-Type: application/json" -X POST -d '{"infrastructures": [1, {"description": "Tosca test at 90.147.170.168:32101","parameters": [{"name": "tosca_endpoint","value": "tosca://90.147.170.152:80/orchestrator/deployments"},{"name": "tosca_token","value": "11223344556677889900AABBCCDDEEFF"},{"name": "tosca_template","value": "tosca_template.yaml"},{"name": "tosca_parameters","value": "wait_ms=30000&max_waits=30"}],"enabled": true,"virtual": false,"name": "tosca_Test@BA"}],"parameters": [{"name": "target_executor","value": "SimpleTosca","description": ""},{"name": "jobdesc_executable","value": "tosca_test.sh","description": ""},{"name": "jobdesc_output","value": "stdout.txt","description": ""},{"name": "jobdesc_error","value": "stderr.txt","description": ""}],"enabled": true,"input_files": [{"override": false,"path": "/home/futuregateway/FutureGateway/fgAPIServer/apps/toscaTest","name": "tosca_template.yaml"},{"override": false,"path": "/home/futuregateway/FutureGateway/fgAPIServer/apps/toscaTest","name": "tosca_test.sh"}],"name": "hostname@tosca(1)","description": "hostname tester application on tosca by setup(1)"}' http://localhost:8888/v1.0/applications?user=brunor
+curl -s\
+     -H "Content-Type: application/json"\
+     -X POST\
+     -d '{
+          "infrastructures": [1, {
+            "description": "Tosca test at 90.147.170.168:32101",
+            "parameters": [{
+              "name": "tosca_endpoint",
+              "value": "tosca://90.147.170.152:80/orchestrator/deployments"
+            }, {
+              "name": "tosca_token",
+              "value": "11223344556677889900AABBCCDDEEFF"
+            }, {
+              "name": "tosca_template",
+              "value": "tosca_template.yaml"
+            }, {
+              "name": "tosca_parameters",
+              "value": "wait_ms=30000&max_waits=30"
+            }],
+            "enabled": true,
+            "virtual": false,
+            "name": "tosca_Test@BA"
+          }],
+          "parameters": [{
+            "name": "target_executor",
+            "value": "SimpleTosca",
+            "description": ""
+          }, {
+            "name": "jobdesc_executable",
+            "value": "tosca_test.sh",
+            "description": ""
+          }, {
+            "name": "jobdesc_output",
+            "value": "stdout.txt",
+            "description": ""
+          }, {
+            "name": "jobdesc_error",
+            "value": "stderr.txt",
+            "description": ""
+          }],
+          "enabled": true,
+          "input_files": [{
+            "override": false,
+            "path": "/home/futuregateway/FutureGateway/fgAPIServer/apps/toscaTest",
+            "name": "tosca_template.yaml"
+          }, {
+            "override": false,
+            "path": "/home/futuregateway/FutureGateway/fgAPIServer/apps/toscaTest",
+            "name": "tosca_test.sh"
+          }],
+          "name": "hostname@tosca(1)",
+          "description": "hostname tester application on tosca by setup(1)"
+        }'\
+      http://localhost:8888/v1.0/applications?user=brunor
 ```
 
 Infrastructure JSON section, foresees both the possibility to use a generic infrastructure or an application level ifnrastructures. In the first case it  is necessary to specify the `id` of the infrastructure 
@@ -285,7 +392,13 @@ Using files:
 Then upload each file content with:
 
 ```
-curl  -H "Authorization: Bearer XXX" -F "file[]=@file1 -F "file[]=@file2 ..."  http://localhost:8888/v10/applications/1/input
+curl -s\
+     -H "Authorization: Bearer XXX"\
+     -F "file[]=@file1"\
+     -F "file[]=@file2"\
+     ...
+     -F "file[]=@filen"\
+     http://localhost:8888/v10/applications/1/input
 ```
 
 View uploaded files:
@@ -306,7 +419,37 @@ curl -i -H "Content-Type: application/json" -X DELETE
 Change an application:
 
 ```
-curl -H "Content-Type: application/json" -H "Authorization: Bearer TKN"  -X PUT -d '{"files": ["tosca_template.yaml", "tosca_test.sh"],"name": "hostname@toscaIDC","parameters": [{"name": "target_executor","value": "ToscaIDC","description": ""}, {"name": "jobdesc_executable","value": "tosca_test.sh","description": "unused"},{"name": "jobdesc_output", "value": "stdout.txt","description": "unused"},{"name": "jobdesc_error", "value": "stderr.txt", "description": "unused"}], "outcome": "JOB","enabled": true,"id": "14","infrastructures": [4],"description": "hostname tester application on toscaIDC"}' http://localhost:8888/v1.0/applications/14
+curl -s\
+     -H "Content-Type: application/json"\
+     -H "Authorization: Bearer TKN"\
+     -X PUT\
+     -d '{
+          "files": ["tosca_template.yaml", "tosca_test.sh"],
+          "name": "hostname@toscaIDC",
+          "parameters": [{
+            "name": "target_executor",
+            "value": "ToscaIDC",
+            "description": ""
+          }, {
+            "name": "jobdesc_executable",
+            "value": "tosca_test.sh",
+            "description": "unused"
+          }, {
+            "name": "jobdesc_output",
+            "value": "stdout.txt",
+            "description": "unused"
+          }, {
+            "name": "jobdesc_error",
+            "value": "stderr.txt",
+            "description": "unused"
+          }],
+          "outcome": "JOB",
+          "enabled": true,
+          "id": "14",
+          "infrastructures": [4],
+          "description": "hostname tester application on toscaIDC"
+        }'\
+    http://localhost:8888/v1.0/applications/14
 ```
 
 Application change supports both files and input_files. Using files the application will not change filenames already present in the application files list and removes files no more present in the new passed list. The use of the field input_files behaved in the same way of files except that uses path and override additional fields. 
@@ -314,7 +457,50 @@ Application change supports both files and input_files. Using files the applicat
 Infrastructures can be specified using registered Ids or using an explicit json declaration like in infrastructure creation. All specified infrastructure ids will be checked against the existing ids. New ids will be associated to the application while ids no more present in the passed json array will be removed. Specifiying explicitly an infrastrcucture description; a new infrastructure will be created and registered with the application; for instance:
 
 ```
-curl -H "Content-Type: application/json" -H "Authorization: Bearer TKN"  -X PUT -d '{"files": ["tosca_template.yaml", "tosca_test.sh"],"name": "hostname@toscaIDC","parameters": [{"name": "target_executor","value": "ToscaIDC","description": ""}, {"name": "jobdesc_executable","value": "tosca_test.sh","description": "unused"},{"name": "jobdesc_output", "value": "stdout.txt","description": "unused"},{"name": "jobdesc_error", "value": "stderr.txt", "description": "unused"}], "outcome": "JOB","enabled": true,"id": "14","infrastructures": [4, { "name": "New infra test", "parameters": [ { "name": "jobservice", "value": "ssh://localhost", "description": "local SSH host" }, { "name": "username", "value": "jobtest" }], "description": "New ssh infra", "enabled": true, "virtual": false }],"description": "hostname tester application on toscaIDC"}' http://localhost:8888/v1.0/applications/14
+curl -s\
+     -H "Content-Type: application/json"\
+     -H "Authorization: Bearer TKN"\
+     -X PUT\
+     -d '{
+          "files": ["tosca_template.yaml", "tosca_test.sh"],
+          "name": "hostname@toscaIDC",
+          "parameters": [{
+            "name": "target_executor",
+            "value": "ToscaIDC",
+            "description": ""
+          }, {
+            "name": "jobdesc_executable",
+            "value": "tosca_test.sh",
+            "description": "unused"
+          }, {
+            "name": "jobdesc_output",
+            "value": "stdout.txt",
+            "description": "unused"
+          }, {
+            "name": "jobdesc_error",
+            "value": "stderr.txt",
+            "description": "unused"
+          }],
+          "outcome": "JOB",
+          "enabled": true,
+          "id": "14",
+          "infrastructures": [4, {
+            "name": "New infra test",
+            "parameters": [{
+              "name": "jobservice",
+              "value": "ssh://localhost",
+              "description": "local SSH host"
+            }, {
+              "name": "username",
+              "value": "jobtest"
+            }],
+            "description": "New ssh infra",
+            "enabled": true,
+            "virtual": false
+          }],
+          "description": "hostname tester application on toscaIDC"
+        }'\
+    http://localhost:8888/v1.0/applications/14
 ``` 
 
 With the explicit infrastructure description in the application change, it is possible to specify application specific values to already existing infrastructures.
@@ -340,7 +526,17 @@ curl -i http://localhost:8888/v1.0/tasks/43?user=brunor
 Insert a new data: `http://localhost:8888/v1.0/applications/2`
 
 ```
-curl -i -H "Content-Type: application/json" -X PATCH -d '{"runtime_data": [ { "data_name": "test_data", "data_value": "test_value", "data_desc": "test description value"} ]}' http://localhost:8888/v1.0/tasks/43?user=brunor
+curl -s\
+     -H "Content-Type: application/json"\
+     -X PATCH\
+     -d '{
+          "runtime_data": [{
+            "data_name": "test_data",
+            "data_value": "test_value",
+            "data_desc": "test description value"
+          }]
+        }'\
+    http://localhost:8888/v1.0/tasks/43?user=brunor
 ```
 
 ### PATCH on task status
@@ -354,7 +550,16 @@ curl -i -H "Content-Type: application/json" -X PATCH -d '{"status": "CANCELLED" 
 
 # Change a data (notice that desc is not specified anymore
 ```
-curl -i -H "Content-Type: application/json" -X PATCH -d '{"runtime_data": [ { "data_name": "test_data", "data_value": "new_test_value"} ]}' http://localhost:8888/v1.0/tasks/43?user=brunor
+curl -s\
+    -H "Content-Type: application/json"\
+    -X PATCH\
+    -d '{
+          "runtime_data": [{
+            "data_name": "test_data",
+            "data_value": "new_test_value"
+          }]
+        }'\
+    http://localhost:8888/v1.0/tasks/43?user=brunor
 ```
 
 # Authentication and Authorization
@@ -373,7 +578,7 @@ This is the way futuregateway manages authorization and authentication as defaul
   ```
 
 	This code requires three inputs
-	`key = "0123456789ABCDEF”` The key values used to encrypt the user credentials
+	`key = "0123456789ABCDEF”` The key values used to encrypt the user credentials (see `fgapiserver.conf` in [fgAPIServer][FGAPISRV])
 	`username = “test”`  The username
 	`password = “test”`  Its password
 
@@ -434,7 +639,27 @@ To install a generic ifnrastructure, have been implemented the Infrastructure AP
 #### Infrastructure creation:
 
 ```
-curl -i -H "Content-Type: application/json" -X POST -d '{ "name": “Infra test“, "parameters": [ { "name": "jobservice", "value": "ssh://localhost" }, { "name": "username", "value": "jobtest" }, { "name": "password", "value": "Xvf56jZ751f" } ], "date": "2017-01-10T16:59:10Z", "description": "ansshinfra", "enabled": true, "virtual": false }' http://localhost:8888/v1.0/infrastructures
+curl -s\
+     -H "Content-Type: application/json"\
+     -X POST\
+     -d '{
+          "name": “Infra test“,
+          "parameters": [{
+            "name": "jobservice",
+            "value": "ssh://localhost"
+          }, {
+            "name": "username",
+            "value": "jobtest"
+          }, {
+            "name": "password",
+            "value": "Xvf56jZ751f"
+          }],
+          "date": "2017-01-10T16:59:10Z",
+          "description": "ansshinfra",
+          "enabled": true,
+          "virtual": false
+        }'\
+    http://localhost:8888/v1.0/infrastructures
 ```
 
 #### View infrastructure:
@@ -449,15 +674,31 @@ It is still possible to install infrastructures when installing new applications
 #### Change infrastructure:
 
 ```
-curl -H "Content-Type: application/json" -H "Authorization: Bearer TKN"  -X PUT -d '{"name": "Infra test (changed)", "enabled": false, "id": 6, "virtual": true, "description": "ansshifnra (changed)", "parameters": [{"name": "jobservice", "value": "ssh://fgtest", "description": "fgtest ssh hots"} ] }' http://localhost:8888/v1.0/infrastructures/6
+curl -s\
+     -H "Content-Type: application/json"\
+     -H "Authorization: Bearer TKN"\
+     -X PUT\
+     -d '{
+          "name": "Infra test (changed)",
+          "enabled": false,
+          "id": 6,
+          "virtual": true,
+          "description": "ansshifnra (changed)",
+          "parameters": [{
+            "name": "jobservice",
+            "value": "ssh://fgtest",
+            "description": "fgtest ssh hots"
+          }]
+        }'\
+    http://localhost:8888/v1.0/infrastructures/6
 ```
 
 ## Executor Interfaces
 
-Executor interfaces (EI)s are the way the APIServer uses to reach any kind of distributed computing resource through the use of any possible middleware component. EIs may deal with very flexible system like JSAGA and its adaptors like in GridEngine and SimpleTosca executor interfaces. In other cases EIs may use APIs or even CLI commands to manage the distributed infrastructure like in the case of the ToscaIDC which deals directly with TOSCA orchestrator REST API calls. Below sections describe how to configure these interfaces, in particular how to setup properly `infrastructure_parameters` values while describing a new APIServer application.
+Executor interfaces (EI)s are the way the APIServer uses to reach any kind of distributed computing resource through the use of any possible middleware component. EIs may deal with very flexible system like JSAGA and its adaptors like in [GridEngine][GRIDENGINE] and SimpleTosca executor interfaces. In other cases EIs may use APIs or even CLI commands to manage the distributed infrastructure like in the case of the ToscaIDC which deals directly with TOSCA orchestrator REST API calls. Below sections describe how to configure these interfaces, in particular how to setup properly `infrastructure_parameters` values while describing a new APIServer application.
 
 
-### GridEngine
+### [GridEngine][GRIDENGINE]
 The GridEngine executor interface target any distributed infrastructure that the Grid and Cloud component can address. The most popular and supported ones are: SSH, EMI/gLIte and rOCCI.
 
 * SSH Configuration
@@ -557,6 +798,31 @@ curl <request_params> -H "Authorization: <access_token>" <FG_API_ENDPOINT>
 ```
 
 To obtain information about generated token, simply use the api call:
+
+```
+curl -s\           
+     -H "Authorization: 1bb2dafb-31b9-11e9-a2f8-0242ac150003"\
+     localhost/v1.0/auth
+{
+    "token_info": {
+        "user_id": 1, 
+        "creation": "2019-02-16T07:05:03Z", 
+        "expiry": 86400, 
+        "valid": true, 
+        "user_name": "futuregateway", 
+        "lasting": 86400
+    }, 
+    "token": "1bb2dafb-31b9-11e9-a2f8-0242ac150003", 
+    "_links": [
+        {
+            "href": "/auth", 
+            "rel": "self"
+        }
+    ]
+}
+```
+
+or, preferably using the `token/` endpoint:
 
 ```
  curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/token
@@ -1188,9 +1454,10 @@ creation:     Record creation timestamp
 last_change:  Record change timestamp  
 ```
 
-* UsersTrackingDatabase: The UsersTrackingDatabase is used by the Grid and Cloud Engine component to keep track of each activity performed by this system. This database has been developed to fullfil the EGI Traceability policies defined for scientific gateways. The Grid and Cloud Engine was the core component of the Catania Science Gateway Framework CSGF from where the FutureGateway takes its orings. The GridEngine executor interface deals with the Grid and Cloud Engine component in order to target the following kind of distributed infrastructures: SSH, EMI/gLite, rOCCI. All of them are reached instructing properly the JSAGA component through the use of the corresponding JSAGA adaptor. This involves that applications targeting the GridEngine executor interface may run on all of those infrastructure just filling up the `infrastructure` and `infrastructure_parameters_tables`. This kind  of configuration is visibile in the baseline setup with the `sayhello` application. When submitting a task linked to many infrastructures, only one of them will be selected using a random strategy. This behavior may be changed in the future with more sophisticated algorithms depending for instance on the loud charge of each targeted infrastructures.
+* UsersTrackingDatabase: The UsersTrackingDatabase is used by the Grid and Cloud Engine component to keep track of each activity performed by this system. This database has been developed to fullfil the EGI Traceability policies defined for scientific gateways. The Grid and Cloud Engine was the core component of the Catania Science Gateway Framework CSGF from where the FutureGateway takes its orings. The [GridEngine][GRIDENGINE] executor interface deals with the Grid and Cloud Engine component in order to target the following kind of distributed infrastructures: SSH, EMI/gLite, rOCCI. All of them are reached instructing properly the JSAGA component through the use of the corresponding JSAGA adaptor. This involves that applications targeting the GridEngine executor interface may run on all of those infrastructure just filling up the `infrastructure` and `infrastructure_parameters_tables`. This kind  of configuration is visibile in the baseline setup with the `sayhello` application. When submitting a task linked to many infrastructures, only one of them will be selected using a random strategy. This behavior may be changed in the future with more sophisticated algorithms depending for instance on the loud charge of each targeted infrastructures.
 
 	
-
+[FGAPISRV]: <https://github.com/FutureGatewayFramework/fgAPIServer>
+[GRIDENGINE]: <https://github.com/csgf/grid-and-cloud-engine/tree/FutureGateway>
 
 
