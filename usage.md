@@ -542,16 +542,8 @@ curl -s\
     http://localhost:8888/v1.0/tasks/43?user=brunor
 ```
 
-### PATCH on task status
+Change data (notice that desc is not specified anymore in the input json)
 
-The PATCH call on tasks endpoint has been enriched in order to support a task status change. Executor interfaces may recognize this change forcing the requested status of the task into the distributed infrastructure. In ToscaIDC executor interface, it is posstible to request status `'CANCELLED'` thus will enforce to release the resource associtated to the task to be released by the TOSCA orchestrator.
-To specify a status change use:
-
-```
-curl -i -H "Content-Type: application/json" -X PATCH -d '{"status": "CANCELLED" }' http://localhost:8888/v1.0/tasks/43?user=brunor
-```
-
-# Change a data (notice that desc is not specified anymore
 ```
 curl -s\
     -H "Content-Type: application/json"\
@@ -565,53 +557,70 @@ curl -s\
     http://localhost:8888/v1.0/tasks/43?user=brunor
 ```
 
+### PATCH on task status
+
+The PATCH call on tasks endpoint has been enriched in order to support a task status change. Executor interfaces may recognize this change forcing the requested status of the task into the distributed infrastructure. In ToscaIDC executor interface, it is posstible to request status `'CANCELLED'` thus will enforce to release the resource associtated to the task to be released by the TOSCA orchestrator.
+To specify a status change use:
+
+```
+curl -s\
+     -H "Content-Type: application/json"\
+     -X PATCH -d '{"status": "CANCELLED" }'\
+    http://localhost:8888/v1.0/tasks/43?user=brunor
+```
+
 # Authentication and Authorization
+FutureGateway maintains its own set of users and it is able to assing users to one or more groups, where each group can have associated different roles and applications. User management in FG can be handled in three different ways:
+
+1. The baseline method, which uses a log-in phase in order to retrieve an access token
+2. The PTV (Portal Token Validation), which uses a third-party API to associate an external user to an internal FG user.
+3. No authentication, in this case any API call will be associated to a particular user configured in the APIServer.
 
 ## Baseline AuthN/Z token managerment
 
 This is the way futuregateway manages authorization and authentication as default. This method can be switched off, modified or substituded by other AuthN/Z systems
 
-1. Obtain a login token (not really mandatory step; see step 2)
+* Obtain a login token (not really mandatory step; see step 2)
 
-	There exists a small code called mklogtoken.py
+	There exists a small code called `mklogtoken.py`available in [fgAPIServer][FGAPISRV]
 
-	```
-  python ./mklogtoken.py
-	mwDn8D9ev4ScUWLqVNiXo40B4w/jrp0vX7CjEwC52Lg9IQHhI4O0AE74afTbpreS
-  ```
+```python
+python ./mklogtoken.py
+mwDn8D9ev4ScUWLqVNiXo40B4w/jrp0vX7CjEwC52Lg9IQHhI4O0AE74afTbpreS
+```
+This code requires three inputs:
 
-	This code requires three inputs
-	`key = "0123456789ABCDEF”` The key values used to encrypt the user credentials (see `fgapiserver.conf` in [fgAPIServer][FGAPISRV])
-	`username = “test”`  The username
-	`password = “test”`  Its password
+* `key = "0123456789ABCDEF"` The key values used to encrypt the user credentials (see `fgapiserver.conf` in [fgAPIServer][FGAPISRV])
+* `username = “test”`  The username
+* `password = “test”`  Its password
 
 	Example (using values above):
   
-  ```
-	$ python ./mklogtoken.py	
-	mwDn8D9ev4ScUWLqVNiXo40B4w/jrp0vX7CjEwC52Lg9IQHhI4O0AE74afTbpreS
-  ```
+ ```
+$ python ./mklogtoken.py	
+mwDn8D9ev4ScUWLqVNiXo40B4w/jrp0vX7CjEwC52Lg9IQHhI4O0AE74afTbpreS
+ ```
 
-	This string simply encripts username,password and timestamp infrormation 
+This string simply encripts username,password and timestamp infrormation 
 
-	This code could be included inside a login web form where user provides his credentials or even on the mobile app; what is really important is the key value used to encrypt the message. The key must be the same also in the front-end. At the moment placed in the configuration file $FGLOCATION/fgAPIServer/fgapiserver.conf (fgapiserver_secret field).
+This code could be included inside a login web form where user provides his credentials or even on the mobile app; what is really important is the key value used to encrypt the message. The key must be the same also in the front-end. At the moment placed in the configuration file $FGLOCATION/fgAPIServer/fgapiserver.conf (fgapiserver_secret field).
 
-2. Obtain a session token using the logtoken via POST
+ * Obtain a session token using the logtoken via POST
 
-	```
-  curl -s -i -H "Content-Type: application/json"\
-          -H "Authorization: Bearer mwDn8D9ev4ScUWLqVNiXo40B4w/jrp0vX7CjEwC52Lg9IQHhI4O0AE74afTbpreS"\
-          -X POST http://localhost:8888/v1.0/auth
-	{
-	    "token": "9dd5e25c-1dca-11e6-91f8-d5a4b6a30f62",
-	    "_links": [
-	        {
-	            "href": "/auth",
-	            "rel": "self"
-	        }
-	    ]
-	}
-	```
+```
+curl -s -i -H "Content-Type: application/json"\
+        -H "Authorization: Bearer mwDn8D9ev4ScUWLqVNiXo40B4w/jrp0vX7CjEwC52Lg9IQHhI4O0AE74afTbpreS"\
+        -X POST http://localhost:8888/v1.0/auth
+{
+    "token": "9dd5e25c-1dca-11e6-91f8-d5a4b6a30f62",
+    "_links": [
+        {
+            "href": "/auth",
+            "rel": "self"
+        }
+    ]
+}
+```
 
  Please notice that it is possible to obtain a session tokens direcrtly from /auth call providing credentials as parameters (operation suggested only if the front is accessible via https. See (Users/Groups and roles part).
 
@@ -620,17 +629,6 @@ This is the way futuregateway manages authorization and authentication as defaul
 PTV can be enabled by a configuration flag, in this case session tokens are verified against an existing portal which answers to a given endpoint. A username and password is necessary to contact the portal endpoint and an https connection should be adopted.
 The portal returns a flag telling if the user is allowed or not and optionally further information such the user name and its group in the portal so that this information can be used  to map the portal user with a futuregateway user.
 While processing APIs using tokens related to users not yet registered in the API Server, the new user will be automatically registered using as reference the received subject field.
-
-## Debug with Liferay using Shibboleth
-Once connected get from the browser shibboleth session and pass it as cookie; for instance:
-```
-curl --cookie "_shibsession_64656661756c7468747470733a2f2f7367772e696e6469676f2d64617461636c6f75642e65752f73686962626f6c657468=_9dcb88c4f6b46005a1f2403079dd738f" -v https://sgw.indigo-datacloud.eu/apis/v1.0/tasks?user=brunor
-```
-
-Another option is:
-
- 1. Once logged place the section cookie in a 'cookie.txt' file
- 2. In curl commands specify option: -b cookie.txt
 
 ## Infrastructures
 Any installed application on the APIServer may have defined one or more infrastructures where it can execute. 
