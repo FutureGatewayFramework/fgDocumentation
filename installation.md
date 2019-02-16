@@ -46,6 +46,21 @@ The installation process foresees the following steps:
 2. Modify the setup\_config.sh file configuring each FutureGateway service as designed in the previous step. Each FutureGateway component contains its own specific settings inside the setup\_config.sh script. Any FG user specified in the configurion file setup\_config.sh must be already present in its host system with passwordless sudo authorization as well as SSH key exchange with the installation node.
 3. From the installation host, execute the script setup\_futuregateway.sh. The first time the setup procedure will install from Git all selected components, while further executions will try to upgrade the components and update its configurations accordingly with the values placed in the file setup\_config.sh
 
+### Instasllation test (virtualization)
+Under the [fgSetup/test][FGSETUP_TEST] installation folder, it is possible to test the installation using a Docker container.
+To perform the installation test, just execute:
+
+```
+make image
+make run
+```
+
+This process may take a while, because both image preparation and the installation of the FG components may requires a while, especially for the APIServerDaemon. Once the installation is accomplished, to execute the tests, execute inside the containerized FG the script:
+
+```
+./do_tests.sh
+```
+
 ### Suggested procedures
 The installation scritps will instantiate the full FutureGateway environment extracting anything from GITHub, so that fresh installations will contain the latest available packages version or in alternative the version specified in the setup scripts. To know about the status or the end of the installation procedure, please check the output of the scripit.
 Once finished the installation it is important to exit from any ssh connection active before the installation procedure and re-log again. During the re-connection, ssh will recognize a host identification change, then proceed to accept the new identity. In case the script have been executed from root it is enough to change the user with `su - futuregateway`.
@@ -54,7 +69,7 @@ Once finished the installation it is important to exit from any ssh connection a
 Docker Containers are totally matching the FutureGateway philosophy to provide the most possible flexible and customisable solution for the final user, for this reason for each FG component a dedicated docker container has been developed.
 There are two possibilities to install FG using Docker containers.
 
-1. The first uses the docker-compose and containers officially deployed in the [Docker Hub](https://hub.docker.com/u/futuregateway)
+1. The first uses the docker-compose and containers officially deployed in the [Docker Hub][FGDKRHUB]
 2. The classic docker container installation using Dockerfiles
 
 ## Docker compose
@@ -90,9 +105,9 @@ The volume could be useful to preserve data persistency if necessary, while the 
 The `docker-compose.yml` file can be used by docker swarm in order to guarantee the scalability. Tests on swarm haven’t been done yet.
 
 ## Docker containers
-The Docker based installation foresees a different container for each FutureGateway component and all necessary files to setup the system are available on GitHub under [fgSetup/docker](https://github.com/FutureGatewayFramework/fgSetup/docker) directory.
+The Docker based installation foresees a different container for each FutureGateway component and all necessary files to setup the system are available on GitHub under [fgSetup/docker][FGSETUP_DOCKER] directory.
 The following chapters are reporting the correct procedure to install each FG component and they have to be executed in the same order as they appear in the instructions.
-The common procedure for all FG components is to extract the fgSeutp repository preferably cloning it from its [master branch](https://github.com/FutureGatewayFramework/fgSetup.git), configure the Dockefile and execute several Makefile receipts. For this reason GNU make is required at the moment to install FG using Docker Containers. Makefile themselves may require to be configured on top in accordance with configuration setting wrote in the Dockerfiles.
+The common procedure for all FG components is to extract the fgSeutp repository preferably cloning it from its [master branch][FGSETUP_GIT], configure the Dockefile and execute several Makefile receipts. For this reason GNU make is required at the moment to install FG using Docker Containers. Makefile themselves may require to be configured on top in accordance with configuration setting wrote in the Dockerfiles.
 
 ## fgdb
 Execute the following commands to setup the FutureGateway database.
@@ -155,13 +170,13 @@ It is possible to override standard settings by using environment variables or d
 
 ## Using ansible playbooks
 
-A third installation has been supported in the past foreseegin the use of ansible playbooks, however this has been deprecated. There exists a third party [repository](https://github.com/tzok/eosc-futuregateway) that is still supporting them.
+A third installation has been supported in the past foreseegin the use of ansible playbooks, however this has been deprecated. There exists a third party [repository][EOSCFG] that is still supporting them.
 
 # Testing components
 In order to test FutureGateway REST APIs, several services should be started before; in particular:
 
-1. The REST APIs [front-end][FGAPIFE]
-2. The API Server Daemon [ServerDaemon][FGASRVD]
+1. The REST APIs [front-end][FGAPISRV]
+2. The API Server Daemon [ServerDaemon][APISRVDMN]
 
 ## REST APIs front-end (fgAPIServer)
 In a production environment the API server front-end must be configured with a dedicated wsgi configuration inside the web server. However for testing purposes the front-end can be executed in stand-alone mode with the following set of commands:
@@ -174,7 +189,7 @@ In a production environment the API server front-end must be configured with a d
 `cd $FGLOCATION/fgAPIServer`
 `cd $FGLOCATION/fgAPIServer`
 `./fgapiserver.py`
-Detach with \<ctrl-a\>\<ctrl-d\>
+Detach with `<ctrl-a><ctrl-d>`
 Reattach the front-end process anytime with `screen -r fgAPIServer`
 
 An example of wsgi configuration in site configuration as reported below:
@@ -288,7 +303,7 @@ Executor interfaces may require to specify several settings
 ### ToscaIDC
 
 This executor interface needs to configure several settings related to the PTV service.
-The values have to be specified inside the web/WEB-INF/classes/it/infn/ct/ToscaIDC.properties file in particular the following values have to configured:
+The values have to be specified inside the `web/WEB-INF/classes/it/infn/ct/ToscaIDC.properties` file in particular the following values have to configured:
 
 * `fgapisrv_ptvendpoint`: PTV hostname/address
 * `fgapisrv_ptvuser`: PTV username
@@ -300,5 +315,14 @@ The values have to be specified inside the web/WEB-INF/classes/it/infn/ct/ToscaI
 * `fgapisrv_ptvpass`: PTV basic authentication password
 
 
-[FGAPIFE]: <https://github.com/FutureGateway/fgAPIServer>
-[FGASRVD]: <https://github.com/FutureGateway/APIServerDaemon>
+[FGAPISRV]: <https://github.com/FutureGatewayFramework/fgAPIServer>
+[FGAPISRV_GIT]: <https://github.com/FutureGatewayFramework/fgAPIServer.git>
+[APISRVDMN]: <https://github.com/FutureGatewayFramework/APIServerDaemon>
+[APISRVDMN_GIT]: <https://github.com/FutureGatewayFramework/APIServerDaemon.git>
+[FGAPISRV_GIT]: <https://github.com/FutureGatewayFramework/fgAPIServer>
+[FGSETUP]: <https://github.com/FutureGatewayFramework/fgSetup>
+[FGSETUP_GIT]: <https://github.com/FutureGatewayFramework/fgSetup.git>
+[FGSETUP_DOCKER]: <https://github.com/FutureGatewayFramework/fgSetup/docker>
+[FGSETUP_TEST]: <https://github.com/FutureGatewayFramework/fgSetup/test>
+[EOSCFG]: <https://github.com/tzok/eosc-futuregateway>
+[FGDKRHUB]: <https://hub.docker.com/u/futuregateway>
