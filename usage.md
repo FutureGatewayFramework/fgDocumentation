@@ -503,7 +503,7 @@ curl -s\
 When successful, this API call returns an access Token, an alphanumerical string that will be used by next API calls in the form:
 
 ```
-curl -H "Content-type: application/json" -H "Authorization: <access_token>" <FG_API_ENDPOINT>
+curl <request_params> -H "Authorization: <access_token>" <FG_API_ENDPOINT>
 ```
 
 To obtain information about generated token, simply use the api call:
@@ -581,7 +581,7 @@ As for the insertion, there are two possibilities, list all users or just a sing
 
 1. All users
 ```
-curl -H "Content-type: application/json" -H "Authorization: 4a998b44-3139-11e9-a2f8-0242ac150003" -X GET localhost/v1.0/users
+curl -H "Authorization: 4a998b44-3139-11e9-a2f8-0242ac150003" -X GET localhost/v1.0/users
 {
     "users": [
         {
@@ -611,7 +611,7 @@ curl -H "Content-type: application/json" -H "Authorization: 4a998b44-3139-11e9-a
 
 2. Single user
 ```
-curl -H "Content-type: application/json" -H "Authorization: 4a998b44-3139-11e9-a2f8-0242ac150003" -X GET localhost/v1.0/users/futuregateway
+curl -s -H "Authorization: 4a998b44-3139-11e9-a2f8-0242ac150003" -X GET localhost/v1.0/users/futuregateway
 {
     "first_name": "FutureGateway", 
     "last_name": "FutureGateway", 
@@ -624,20 +624,269 @@ curl -H "Content-type: application/json" -H "Authorization: 4a998b44-3139-11e9-a
 }
 ```
 
+#### User info
+To retrieve user info:
+
+```
+curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/users/futuregateway
+{
+    "first_name": "FutureGateway", 
+    "last_name": "FutureGateway", 
+    "name": "futuregateway", 
+    "institute": "INFN", 
+    "mail": "sgw-admin@lists.indigo-datacloud.eu", 
+    "creation": "2019-02-16T07:33:37Z", 
+    "id": 1, 
+    "modified": "2019-02-16T07:33:37Z"
+
+```
+
+#### User groups
+
+#### User tasks
+To list user tasks:
+
+```
+curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/users/futuregateway/tasks
+{
+    "tasks": [
+        ... Task info is expanded
+    ]
+}
+```
+
+To list a single user taks:
+
+```
+curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/users/futuregateway/tasks/1
+{
+    "status": "DONE", 
+    "description": "sayhello by app_id: 3 test run", 
+    "creation": "2019-02-16T07:33:53Z", 
+    "iosandbox": "/app/fgiosandbox/35e09962-31bd-11e9-a6de-0242ac120005", 
+    "user": "futuregateway", 
+    "id": "1", 
+    "output_files": [...], 
+    "application": "3", 
+    "arguments": [
+        "This is the argument"
+    ], 
+    "runtime_data": [], 
+    "input_files": [...], 
+    "last_change": "2019-02-16T07:36:19Z"
+}
+```
+
 ### Groups
+To view user groups:
+
+```
+curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/users/futuregateway/groups
+{
+    "groups": [
+        {
+            "creation": "2019-02-16T07:33:37Z", 
+            "id": 1, 
+            "modified": "2019-02-16T07:33:37Z", 
+            "name": "administrator"
+        }
+    ]
+}
+```
+
+To add one or more groups to a user, use:
+```
+curl -s -H "Content-type: application/json" -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" -d '{"groups": [ 2 ]}' -X POST localhost/v1.0/users/futuregateway/groups
+{
+    "groups": [
+        2
+    ]
+}
+```
+
+To delete a group to the given user, use:
+
+```
+curl -s -H Content-type: application/json" -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" -d '{"groups": [ 2 ]}' -X DELETE localhost/v1.0/users/futuregateway/groups
+{
+    "groups": [
+        2
+    ]
+}
+```
 
 #### View Groups
+To view all defined groups:
 
-#### Create Groups
+```
+curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/groups
+{
+    "groups": [
+        {
+            "creation": "2019-02-16T07:33:37Z", 
+            "id": 1, 
+            "modified": "2019-02-16T07:33:37Z", 
+            "name": "administrator"
+        }, 
+        {
+            "creation": "2019-02-16T07:33:37Z", 
+            "id": 2, 
+            "modified": "2019-02-16T07:33:37Z", 
+            "name": "test"
+        }, 
+        {
+            "creation": "2019-02-16T07:33:37Z", 
+            "id": 3, 
+            "modified": "2019-02-16T07:33:37Z", 
+            "name": "users"
+        }, 
+        {
+            "creation": "2019-02-16T07:33:37Z", 
+            "id": 4, 
+            "modified": "2019-02-16T07:33:37Z", 
+            "name": "developers"
+        }
+    ]
+}
+```
 
-#### Associate applications to groups
+To restrict the information to a single group:
 
-#### Associate roles to groups
+```
+curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/groups/administrator
+{
+    "creation": "2019-02-16T07:33:37Z", 
+    "id": 1, 
+    "modified": "2019-02-16T07:33:37Z", 
+    "name": "administrator"
+}
+```
 
-### Roles
+To create a new group, use:
+```
+curl -s -H "Content-type: application/json" -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" -d '{ "name": "new group" }' -X POST localhost/v1.0/groups
+{
+    "creation": "2019-02-16T08:10:51Z", 
+    "id": 5, 
+    "modified": "2019-02-16T08:10:51Z", 
+    "name": "new group"
+}
+```
+
+#### Group applications
+To view group applications use:
+
+```
+curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/groups/1/apps
+{
+    "applications": [
+        {
+            "description": "unassigned infrastructure", 
+            "creation": "2019-02-16T07:33:36Z", 
+            "enabled": 0, 
+            "outcome": "INFRA", 
+            "id": 0, 
+            "name": "infrastructures"
+        }, 
+        {
+            "description": "hostname tester application", 
+            "creation": "2019-02-16T07:33:36Z", 
+            "enabled": 1, 
+            "outcome": "JOB", 
+            "id": 1, 
+            "name": "hostname"
+        }, 
+        {
+            "description": "A more complex app using I/O Sandboxing", 
+            "creation": "2019-02-16T07:33:36Z", 
+            "enabled": 1, 
+            "outcome": "JOB", 
+            "id": 2, 
+            "name": "SayHello"
+        }, 
+        {
+            "description": "sayhello tester application", 
+            "creation": "2019-02-16T07:33:52Z", 
+            "enabled": 1, 
+            "outcome": "JOB", 
+            "id": 3, 
+            "name": "sayhello"
+        }
+    ]
+}
+```
+
+To add an application to a group use:
+
+```
+curl -s -H "Content-type: application/json" -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" -d '{ "applications": [3]}' -X POST localhost/v1.0/groups/2/apps
+{
+    "applications": [
+        3
+    ]
+}
+```
+
+To delete an application from a group, use:
+
+```
+curl -s -H "Content-type: application/json" -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" -d '{ "applications": [3]}' -X DELETE localhost/v1.0/groups/2
+```
+
+#### Group roles
+To view roles associated to a given group is:
+
+```
+curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/groups/3/roles
+{
+    "roles": [
+        {
+            "creation": "2019-02-16T07:33:37Z", 
+            "id": 4, 
+            "modified": "2019-02-16T07:33:37Z", 
+            "name": "app_view"
+        }
+    ]
+}
+```
+
+To add roles to a given group, use:
+
+```
+curl -s -H "Content-type: application/json" -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" -d '{ "roles": [ 20, 21, 22]' -X POST localhost/v1.0/groups/3/roles
+{
+    "roles": [
+        20, 
+        21, 
+        22
+    ]
+}
+```
 
 #### View roles
 
+To view all available roles, use:
+
+```
+curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/roles
+{
+    "roles": [
+        {
+            "creation": "2019-02-16T07:33:37Z", 
+            "id": 1, 
+            "modified": "2019-02-16T07:33:37Z", 
+            "name": "app_install"
+        },
+        ...
+        {
+            "creation": "2019-02-16T07:33:37Z", 
+            "id": 34, 
+            "modified": "2019-02-16T07:33:37Z", 
+            "name": "roles_view"
+        }
+    ]
+}
+```
 
 
 ## Advanced operations
