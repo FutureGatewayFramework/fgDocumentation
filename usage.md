@@ -1,3 +1,6 @@
+[FGAPISRV]: <https://github.com/FutureGatewayFramework/fgAPIServer>
+[GRIDENGINE]: <https://github.com/csgf/grid-and-cloud-engine/tree/FutureGateway>
+
 # User guide
 
 APIs are compliant with specification defined in: http://docs.fgapis.apiary.io/#
@@ -1457,7 +1460,5 @@ last_change:  Record change timestamp
 * UsersTrackingDatabase: The UsersTrackingDatabase is used by the Grid and Cloud Engine component to keep track of each activity performed by this system. This database has been developed to fullfil the EGI Traceability policies defined for scientific gateways. The Grid and Cloud Engine was the core component of the Catania Science Gateway Framework CSGF from where the FutureGateway takes its orings. The [GridEngine][GRIDENGINE] executor interface deals with the Grid and Cloud Engine component in order to target the following kind of distributed infrastructures: SSH, EMI/gLite, rOCCI. All of them are reached instructing properly the JSAGA component through the use of the corresponding JSAGA adaptor. This involves that applications targeting the GridEngine executor interface may run on all of those infrastructure just filling up the `infrastructure` and `infrastructure_parameters_tables`. This kind  of configuration is visibile in the baseline setup with the `sayhello` application. When submitting a task linked to many infrastructures, only one of them will be selected using a random strategy. This behavior may be changed in the future with more sophisticated algorithms depending for instance on the loud charge of each targeted infrastructures.
 
 	
-[FGAPISRV]: <https://github.com/FutureGatewayFramework/fgAPIServer>
-[GRIDENGINE]: <https://github.com/csgf/grid-and-cloud-engine/tree/FutureGateway>
 
 
