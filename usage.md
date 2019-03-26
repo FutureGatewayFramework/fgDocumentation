@@ -958,7 +958,240 @@ curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/
 
 ```
 
-#### User groups
+### User data
+It is possible to associate data values at user level through a dedicated set of API calls. Data values are in the form of (key_name, key_value), plus a set of other attributes that are unused at the moment, but that could be useful for future extensions. Available ser data fields are:
+
+ *. `data_name` - It identifies the data
+ *. `data_value` - The value associated to the data name
+ *. `data_desc` - The description of the data
+ *. `data_type` - Type of data (unused)
+ *. `data_proto` - Type of protocol to access the data (unused)
+ *. `data_id` - The identifier associated to the `data_name`. A single `data_name` may have many `data_id` each generated adding new data version. Only the element having the higher `data_id` will be returned by API calls.
+ *. `creation` - Date of creation
+ *. `last_change` - Date related to the last data change
+
+
+#### User data list
+
+```
+curl -H "Authorization: Bearer $TKN" 127.0.0.1/fgapiserver/v1.0/users/futuregateway/data
+{
+    "data": [
+        {
+            "data_proto": "TEST_DATA_PROTO", 
+            "creation": "2019-03-15T12:35:57Z", 
+            "data_type": "TEST_DATA_TYPE", 
+            "data_desc": "TEST_DATA_DESCRIPTION", 
+            "data_id": 0, 
+            "data_value": "TEST_DATA_VALUE", 
+            "data_name": "TEST_DATA_NAME", 
+            "last_change": "2019-03-15T12:35:57Z"
+        }
+    ]
+}
+```
+The returned json has a single 'data' element containing an array of data records.
+It is also possible to retrieve the data associated to a single `data_name` entry using:
+
+```
+curl -H "Authorization: Bearer $TKN" 127.0.0.1/fgapiserver/v1.0/users/futuregateway/data/TEST_DATA_NAME_3
+{
+    "data_proto": "TEST_DATA_PROTO_3", 
+    "creation": "2019-03-15T15:57:45Z", 
+    "data_value": "TEST_DATA_VALUE_3", 
+    "data_type": "TEST_DATA_TYPE_3", 
+    "data_id": 0, 
+    "data_desc": "TEST_DATA_DESCRIPTION_3", 
+    "data_name": "TEST_DATA_NAME_3", 
+    "last_change": "2019-03-15T15:57:45Z"
+}
+```
+
+#### Add user data
+It is possible to add a set of user data using a single POST method
+
+```
+cat > userdata <<EOF
+{
+  "data": [
+      {"data_name": "TEST_DATA_NAME_1",
+     "data_value": "TEST_DATA_VALUE_1",
+     "data_desc": "TEST_DATA_DESCRIPTION_1",
+     "data_proto": "TEST_DATA_PROTO_1",
+     "data_type": "TEST_DATA_TYPE_1"},
+    {"data_name": "TEST_DATA_NAME_2",
+     "data_value": "TEST_DATA_VALUE_2",
+     "data_desc": "TEST_DATA_DESCRIPTION_2",
+     "data_proto": "TEST_DATA_PROTO_2",
+     "data_type": "TEST_DATA_TYPE_2"},
+    {"data_name": "TEST_DATA_NAME_3",
+     "data_value": "TEST_DATA_VALUE_3",
+     "data_desc": "TEST_DATA_DESCRIPTION_3",
+     "data_proto": "TEST_DATA_PROTO_3",
+     "data_type": "TEST_DATA_TYPE_3"}
+  ]
+}
+EOF
+
+curl -H "Content-type: Application/json" -H "Authorization: Bearer $TKN" -X POST -d @userdata http://127.0.0.1/fgapiserver/v1.0/users/futuregateway/data
+{
+    "data": [
+        {
+            "data_desc": "TEST_DATA_DESCRIPTION_1", 
+            "data_name": "TEST_DATA_NAME_1", 
+            "data_value": "TEST_DATA_VALUE_1", 
+            "data_type": "TEST_DATA_TYPE_1", 
+            "data_proto": "TEST_DATA_PROTO_1"
+        }, 
+        {
+            "data_desc": "TEST_DATA_DESCRIPTION_2", 
+            "data_name": "TEST_DATA_NAME_2", 
+            "data_value": "TEST_DATA_VALUE_2", 
+            "data_type": "TEST_DATA_TYPE_2", 
+            "data_proto": "TEST_DATA_PROTO_2"
+        }, 
+        {
+            "data_desc": "TEST_DATA_DESCRIPTION_3", 
+            "data_name": "TEST_DATA_NAME_3", 
+            "data_value": "TEST_DATA_VALUE_3", 
+            "data_type": "TEST_DATA_TYPE_3", 
+            "data_proto": "TEST_DATA_PROTO_3"
+        }
+    ]
+}
+```
+
+Repeated calls to the POST action using the same `data_name` field, cause the generation of a new record having an increased value for `data_id` item.
+It is possible to restrict the action to a single `data_name` record with:
+
+```
+cat >userdata <<EOF
+{
+    "data_proto": "TEST_DATA_PROTO_3",
+    "creation": "2019-03-15T15:57:45Z",
+    "data_value": "TEST_DATA_VALUE_3_1",
+    "data_type": "TEST_DATA_TYPE_3",
+    "data_id": 0,
+    "data_desc": "TEST_DATA_DESCRIPTION_3",
+    "data_name": "TEST_DATA_NAME_3",
+    "last_change": "2019-03-15T15:57:45Z"
+}
+EOF
+
+curl -H "Content-type: Application/json" -H "Authorization: Bearer $TKN" -X POST -d @userdata http://127.0.0.1/fgapiserver/v1.0/users/futuregateway/data/TEST_DATA_NAME_3
+{
+    "data_proto": "TEST_DATA_PROTO_3", 
+    "data_name": "TEST_DATA_NAME_3", 
+    "data_value": "TEST_DATA_VALUE_3_1", 
+    "data_type": "TEST_DATA_TYPE_3", 
+    "data_id": 0, 
+    "data_desc": "TEST_DATA_DESCRIPTION_3", 
+    "creation": "2019-03-15T15:57:45Z", 
+    "last_change": "2019-03-15T15:57:45Z"
+}
+```
+
+#### Modify user data
+It is possible to change the values of one or more data records, using the PATCH method
+
+```
+cat > userdata <<EOF
+{
+  "data": [
+    {"data_name": "TEST_DATA_NAME_1",
+     "data_value": "TEST_DATA_VALUE_ONE",
+     "data_desc": "TEST_DATA_DESCRIPTION_ONE",
+     "data_proto": "TEST_DATA_PROTO_ONE",
+     "data_type": "TEST_DATA_TYPE_ONE"},
+    {"data_name": "TEST_DATA_NAME_2",
+     "data_value": "TEST_DATA_VALUE_TWO",
+     "data_desc": "TEST_DATA_DESCRIPTION_TWO",
+     "data_proto": "TEST_DATA_PROTO_TWO",
+     "data_type": "TEST_DATA_TYPE_TWO"},
+  ]
+}
+EOF
+
+curl -H "Content-type: Application/json" -H "Authorization: Bearer $TKN" -d @userdata -X PATCH http://127.0.0.1/fgapiserver/v1.0/users/futuregateway/data
+{
+    "data": [
+        {
+            "data_desc": "TEST_DATA_DESCRIPTION_ONE", 
+            "data_name": "TEST_DATA_NAME_1", 
+            "data_value": "TEST_DATA_VALUE_ONE", 
+            "data_type": "TEST_DATA_TYPE_ONE", 
+            "data_proto": "TEST_DATA_PROTO_ONE"
+        }, 
+        {
+            "data_desc": "TEST_DATA_DESCRIPTION_TWO", 
+            "data_name": "TEST_DATA_NAME_2", 
+            "data_value": "TEST_DATA_VALUE_TWO", 
+            "data_type": "TEST_DATA_TYPE_TWO", 
+            "data_proto": "TEST_DATA_PROTO_TWO"
+        }
+    ]
+}
+```
+
+It is possible to restrict the modify action to a single user data record with:
+
+```
+cat >userdata <<EOF
+{
+    "data_proto": "TEST_DATA_PROTO_3",
+    "creation": "2019-03-15T15:57:45Z",
+    "data_value": "TEST_DATA_VALUE_3_1",
+    "data_type": "TEST_DATA_TYPE_MODIFIED",
+    "data_id": 0,
+    "data_desc": "TEST_DATA_DESCRIPTION_3",
+    "data_name": "TEST_DATA_NAME_3",
+    "last_change": "2019-03-15T15:57:45Z"
+}
+EOF
+
+There are now two items related to the data name: 'TEST_DATA_NAME_3'in the database, although API cannot access past variable version, it is possible to recover old values querying the DB.
+
+curl -H "Content-type: Application/json" -H "Authorization: Bearer $TKN" -d @userdata -X PATCH http://127.0.0.1/fgapiserver/v1.0/users/futuregateway/data/TEST_DATA_NAME_3
+{
+    "data_proto": "TEST_DATA_PROTO_3", 
+    "data_name": "TEST_DATA_NAME_3", 
+    "data_value": "TEST_DATA_VALUE_3_9999", 
+    "data_type": "TEST_DATA_TYPE_MODIFIED", 
+    "data_id": 0, 
+    "data_desc": "TEST_DATA_DESCRIPTION_3", 
+    "creation": "2019-03-15T15:57:45Z", 
+    "last_change": "2019-03-15T15:57:45Z"
+}
+```
+
+#### Delete user data
+It is possible to delete one or more data records using DELETE method
+
+```
+curl -H "Content-type: Application/json" -H "Authorization: Bearer $TKN" -d @pippo -X DELETE http://127.0.0.1/fgapiserver/v1.0/users/futuregateway/data
+{
+    "data": [
+        {
+            "data_name": "TEST_DATA_NAME"
+        }, 
+        {
+            "data_name": "TEST_DATA_NAME_1"
+        }, 
+        {
+            "data_name": "TEST_DATA_NAME_2"
+        }, 
+        {
+            "data_name": "TEST_DATA_NAME_3"
+        }
+    ]
+}
+```
+
+To delete a single user data record, use:
+
+```
+curl -H "Authorization: Bearer $TKN" -X DELETE http://127.0.0.1/fgapiserver/v1.0/users/futuregateway/data/TEST_DATA_NAME_3
+```
 
 #### User tasks
 To list user tasks:
@@ -967,7 +1200,7 @@ To list user tasks:
 curl -s -H "Authorization: 3542d167-31bd-11e9-9648-0242ac120003" localhost/v1.0/users/futuregateway/tasks
 {
     "tasks": [
-        ... Task info is expanded
+        ... { Expanded list of tasks }, ...
     ]
 }
 ```
