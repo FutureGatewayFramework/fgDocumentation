@@ -3,5 +3,6 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - API usage instructions: usage.md
+  - Tutorials: tutorials.md
   - About: about.md
 theme: readthedocs
