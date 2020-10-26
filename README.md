@@ -1,5 +1,7 @@
 # FutureGateway Framework
 
+[![Documentation Status](https://readthedocs.org/projects/futuregateway-framework/badge/?version=latest)](https://futuregateway-framework.readthedocs.io/en/latest/?badge=latest)
+
 The FutureGatewayFramework (FG) consists of a set of software components able to build, or assist existing web portals, or other community oriented interfaces to become 'Science Gateways'. In accordance to the definition of Science Gateways, the FutureGateway allows the access to distributed computing resources such as Grid, Cloud and HPC, preserving security and ensuring users accountability.
 The idea of the FutureGateway Framework comes from many years of experience gained in supporting scientific users communities to exploit federated services, thus improve their research quality. In that period several key common factors have been identified among different comminity projects and they are listed below:
 
